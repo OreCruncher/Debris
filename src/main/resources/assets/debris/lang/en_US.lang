@@ -1,6 +1,9 @@
 # Blocks
 tile.pileOfRubble.name=Pile of Rubble
 
+# Version checking strings
+msg.NewVersion.debris=["§6Update Available: §9[",{"text":"§2%1$s §ev%2$s§f","color":"gold","hoverEvent":{"action":"show_text","value":{"text":"Click for CurseForge Project Page","color":"aqua"}},"clickEvent":{"action":"open_url","value":"%3$s"}},"§9]"]
+
 #Configuration
 cfg.logging.cat.Logging=Login Options
 cfg.logging.cat.Logging.tooltip=Options to control logging/reporting

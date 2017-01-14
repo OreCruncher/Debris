@@ -1,10 +1,10 @@
 {
-	"homepage":"https://minecraft.curseforge.com/projects/debris/files",
-	"1.10.2":{
-		"0.0.1.0":"See https://github.com/OreCruncher/Debris/blob/master/CHANGELOG.md"
+	"homepage": "https://minecraft.curseforge.com/projects/debris/files",
+	"1.10.2": {
+		"0.0.1.0": "See https://github.com/OreCruncher/Debris/blob/master/CHANGELOG.md"
 	},
-	"promos":{
-		"1.10.2-latest":"0.0.1.0",
-		"1.10.2-recommended":"0.0.1.0"
+	"promos": {
+		"1.10.2-latest": "0.0.1.0",
+		"1.10.2-recommended": "0.0.1.0"
 	}
 }

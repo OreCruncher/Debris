@@ -72,7 +72,7 @@ public final class VersionCheck {
 			return null;
 		final String t = result.target.toString();
 		final String u = result.url.toString();
-		return Localization.format("msg.NewVersion.dsurround", Debris.MOD_NAME, t, u);
+		return Localization.format("msg.NewVersion.debris", Debris.MOD_NAME, t, u);
 	}
 
 	@SubscribeEvent
