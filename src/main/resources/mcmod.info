@@ -1,0 +1,16 @@
+[
+{
+  "modid": "debris",
+  "name": "Debris",
+  "description": "",
+  "version": "$version",
+  "mcversion": "$mcversion",
+  "url": "https://github.com/OreCruncher/Debris/wiki",
+  "updateUrl":"https://raw.githubusercontent.com/OreCruncher/Debris/master/version.json",
+  "authorList": ["OreCruncher"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
