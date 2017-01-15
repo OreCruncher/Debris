@@ -40,7 +40,7 @@ public class LootPoolBuilder {
 
 	private final String name;
 	private final List<LootEntry> entries = new ArrayList<LootEntry>();
-	private RandomValueRange roll = new RandomValueRange(0);
+	private RandomValueRange roll = new RandomValueRange(1);
 	private RandomValueRange bonus = new RandomValueRange(0);
 
 	public LootPoolBuilder(@Nonnull final String name) {
@@ -50,7 +50,7 @@ public class LootPoolBuilder {
 	public LootPoolBuilder add(@Nonnull final String itemId, final int weight, final int min, final int max) {
 		final ItemStack stack = RegistryHelper.getItemStack(itemId);
 		if (stack != null) {
-			final LootEntry entry = new LootEntryBuilder().setItemStack(stack).setWeight(weight).setMinMax(min, max)
+			final LootEntry entry = new LootEntryBuilder(itemId).setItemStack(stack).setWeight(weight).setAmount(min, max)
 					.build();
 			this.entries.add(entry);
 		}
@@ -69,6 +69,6 @@ public class LootPoolBuilder {
 
 	public LootPool build() {
 		final LootEntry[] poolEntries = this.entries.toArray(new LootEntry[this.entries.size()]);
-		return new LootPool(poolEntries, LootEntryBuilder.EMPTY_CONDITIONS, this.roll, this.bonus, this.name);
+		return new LootPool(poolEntries, Loot.EMPTY_CONDITIONS, this.roll, this.bonus, this.name);
 	}
 }

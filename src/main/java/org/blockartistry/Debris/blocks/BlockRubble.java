@@ -48,14 +48,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockRubble extends BlockBase {
 
-	protected static final AxisAlignedBB RUBBLE_AABB = new AxisAlignedBB(0.0D, 0.0D, 0D, 1D, 0.5D, 1D);
+	protected static final AxisAlignedBB RUBBLE_AABB = new AxisAlignedBB(0.0625F, 0.0F, 0.0625F, 0.9375F, 0.375F, 0.9375F);
 
 	public BlockRubble(@Nonnull final String name) {
-		super(Material.GROUND, name);
+		super(Material.ROCK, name);
 
-		// Like gravel
+		// Like cobblestone
 		this.setSoundType(SoundType.GROUND);
-		this.setHardness(0.6F);
+		this.setHardness(2F);
+		this.setResistance(10F);
 	}
 
 	@Override
@@ -83,15 +84,15 @@ public class BlockRubble extends BlockBase {
 	}
 
 	@Override
-	public boolean canPlaceBlockAt(@Nonnull final World worldIn, @Nonnull final BlockPos pos) {
-		return super.canPlaceBlockAt(worldIn, pos) && this.canBlockStay(worldIn, pos, this.getDefaultState());
+	public boolean canPlaceBlockAt(@Nonnull final World world, @Nonnull final BlockPos pos) {
+		return super.canPlaceBlockAt(world, pos) && this.canBlockStay(world, pos, this.getDefaultState());
 	}
 
-	public boolean canBlockStay(@Nonnull final World worldIn, @Nonnull final BlockPos pos,
+	public boolean canBlockStay(@Nonnull final World world, @Nonnull final BlockPos pos,
 			@Nonnull final IBlockState state) {
-		if (pos.getY() >= 0 && pos.getY() < 256) {
-			final IBlockState iblockstate = worldIn.getBlockState(pos.down());
-			return iblockstate.getMaterial().isSolid();
+		if (pos.getY() > 0 && pos.getY() < 256) {
+			final IBlockState downState = world.getBlockState(pos.down());
+			return downState.getBlock() != ModBlocks.pileOfRubble && downState.getMaterial().isSolid();
 		} else {
 			return false;
 		}
@@ -99,23 +100,23 @@ public class BlockRubble extends BlockBase {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void neighborChanged(@Nonnull final IBlockState state, @Nonnull final World worldIn,
-			@Nonnull final BlockPos pos, @Nonnull final Block blockIn) {
-		super.neighborChanged(state, worldIn, pos, blockIn);
-		this.checkAndDropBlock(worldIn, pos, state);
+	public void neighborChanged(@Nonnull final IBlockState state, @Nonnull final World world,
+			@Nonnull final BlockPos pos, @Nonnull final Block block) {
+		super.neighborChanged(state, world, pos, block);
+		this.checkAndDropBlock(world, pos, state);
 	}
 
 	@Override
-	public void updateTick(@Nonnull final World worldIn, @Nonnull final BlockPos pos, @Nonnull final IBlockState state,
+	public void updateTick(@Nonnull final World world, @Nonnull final BlockPos pos, @Nonnull final IBlockState state,
 			@Nonnull final Random rand) {
-		this.checkAndDropBlock(worldIn, pos, state);
+		this.checkAndDropBlock(world, pos, state);
 	}
 
-	protected void checkAndDropBlock(@Nonnull final World worldIn, @Nonnull final BlockPos pos,
+	protected void checkAndDropBlock(@Nonnull final World world, @Nonnull final BlockPos pos,
 			@Nonnull final IBlockState state) {
-		if (!this.canBlockStay(worldIn, pos, state)) {
-			this.dropBlockAsItem(worldIn, pos, state, 0);
-			worldIn.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+		if (!this.canBlockStay(world, pos, state)) {
+			this.dropBlockAsItem(world, pos, state, 0);
+			world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
 		}
 	}
 

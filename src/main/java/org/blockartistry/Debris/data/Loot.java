@@ -24,15 +24,14 @@
 
 package org.blockartistry.Debris.data;
 
-import com.google.gson.annotations.SerializedName;
+import net.minecraft.world.storage.loot.conditions.LootCondition;
 
-public final class ItemEntry {
-	
-	@SerializedName("weight")
-	public Integer weight = 10;
-	@SerializedName("min")
-	public Integer min = 1;
-	@SerializedName("max")
-	public Integer max = 1;
+public final class Loot {
+
+	public static final LootCondition[] EMPTY_CONDITIONS = {};
+
+	private Loot() {
+		
+	}
 
 }

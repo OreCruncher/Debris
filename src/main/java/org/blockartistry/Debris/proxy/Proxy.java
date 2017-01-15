@@ -31,6 +31,7 @@ import org.blockartistry.Debris.blocks.ModBlocks;
 import org.blockartistry.Debris.data.RubbleLootTable;
 import org.blockartistry.Debris.items.ModItems;
 import org.blockartistry.Debris.util.Localization;
+import org.blockartistry.Debris.waila.WailaHandler;
 import org.blockartistry.Debris.world.BiomeDecorationHandler;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -66,6 +67,7 @@ public class Proxy {
 	}
 
 	public void init(@Nonnull final FMLInitializationEvent event) {
+		WailaHandler.register();
 		ModEnvironment.initialize();
 	}
 

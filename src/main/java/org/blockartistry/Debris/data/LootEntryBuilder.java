@@ -36,7 +36,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.RandomValueRange;
-import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraft.world.storage.loot.functions.SetCount;
 import net.minecraft.world.storage.loot.functions.SetDamage;
@@ -44,9 +43,7 @@ import net.minecraft.world.storage.loot.functions.SetMetadata;
 
 public final class LootEntryBuilder {
 
-	public static final LootCondition[] EMPTY_CONDITIONS = {};
-
-	private String name;
+	private final String name;
 	private Item item;
 	private int metaMin = RegistryHelper.NO_SUBTYPE;
 	private int metaMax = RegistryHelper.NO_SUBTYPE;
@@ -55,14 +52,12 @@ public final class LootEntryBuilder {
 	private int quality = 0;
 
 	private int weight = 1;
-	private int min = 1;
-	private int max = 1;
+	private RandomValueRange amount = new RandomValueRange(1, 1);
 
-	public LootEntryBuilder setName(@Nonnull final String name) {
+	public LootEntryBuilder(@Nonnull final String name) {
 		this.name = name;
-		return this;
 	}
-	
+
 	public LootEntryBuilder setItem(@Nonnull final Item item) {
 		this.item = item;
 		return this;
@@ -72,7 +67,7 @@ public final class LootEntryBuilder {
 		this.weight = weight;
 		return this;
 	}
-	
+
 	public LootEntryBuilder setQuality(final int quality) {
 		this.quality = quality;
 		return this;
@@ -84,19 +79,8 @@ public final class LootEntryBuilder {
 		return this;
 	}
 
-	public LootEntryBuilder setMin(final int min) {
-		this.min = min;
-		return this;
-	}
-
-	public LootEntryBuilder setMax(final int max) {
-		this.max = max;
-		return this;
-	}
-
-	public LootEntryBuilder setMinMax(final int min, final int max) {
-		this.min = min;
-		this.max = max;
+	public LootEntryBuilder setAmount(final int min, final int max) {
+		this.amount = new RandomValueRange(min, max);
 		return this;
 	}
 
@@ -110,20 +94,20 @@ public final class LootEntryBuilder {
 		this.item = stack.getItem();
 		this.metaMin = this.metaMax = this.item.getHasSubtypes() ? stack.getMetadata() : RegistryHelper.NO_SUBTYPE;
 		this.damageMin = this.damageMax = this.item.isDamageable()
-				? ((float) stack.getItemDamage() / (float) stack.getMaxDamage()) : -1;
+				? ((float) (stack.getMaxDamage() - stack.getItemDamage()) / (float) stack.getMaxDamage()) : -1;
 		return this;
 	}
 
 	public LootEntry build() {
 		final List<LootFunction> func = new ArrayList<LootFunction>();
-		func.add(new SetCount(EMPTY_CONDITIONS, new RandomValueRange(this.min, this.max)));
+		func.add(new SetCount(Loot.EMPTY_CONDITIONS, this.amount));
 		if (this.metaMin != RegistryHelper.NO_SUBTYPE)
-			func.add(new SetMetadata(EMPTY_CONDITIONS, new RandomValueRange(this.metaMin, this.metaMax)));
+			func.add(new SetMetadata(Loot.EMPTY_CONDITIONS, new RandomValueRange(this.metaMin, this.metaMax)));
 		if (this.damageMin != -1)
-			func.add(new SetDamage(EMPTY_CONDITIONS, new RandomValueRange(this.damageMin, this.damageMax)));
-		
+			func.add(new SetDamage(Loot.EMPTY_CONDITIONS, new RandomValueRange(this.damageMin, this.damageMax)));
+
 		final LootFunction[] f = func.toArray(new LootFunction[func.size()]);
-		return new LootEntryItem(this.item, this.weight, this.quality, f, EMPTY_CONDITIONS, this.name);
+		return new LootEntryItem(this.item, this.weight, this.quality, f, Loot.EMPTY_CONDITIONS, this.name);
 	}
 
 }

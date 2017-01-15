@@ -92,7 +92,7 @@ public final class BiomeDecorationHandler {
 
 				final int x = event.getPos().getX() + event.getRand().nextInt(16) + 8;
 				final int z = event.getPos().getZ() + event.getRand().nextInt(16) + 8;
-				int y = event.getRand().nextInt(spread) + MIN_Y;
+				final int y = event.getRand().nextInt(spread) + MIN_Y;
 
 				pos.setPos(x, y, z);
 
@@ -102,14 +102,14 @@ public final class BiomeDecorationHandler {
 						event.getWorld().setBlockState(pos, state);
 						break;
 					}
-					y--;
+					pos.setY(pos.getY() - 1);
 				}
 			}
 		}
 	}
-	
+
 	public static void init() {
-        MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeDecorationHandler());;
+		MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeDecorationHandler());
 	}
 
 }
