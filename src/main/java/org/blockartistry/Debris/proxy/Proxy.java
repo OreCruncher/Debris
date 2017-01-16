@@ -26,7 +26,6 @@ package org.blockartistry.Debris.proxy;
 
 import javax.annotation.Nonnull;
 
-import org.blockartistry.Debris.ModEnvironment;
 import org.blockartistry.Debris.data.RubbleLootTable;
 import org.blockartistry.Debris.items.ModItems;
 import org.blockartistry.Debris.util.Localization;
@@ -66,7 +65,6 @@ public class Proxy {
 
 	public void init(@Nonnull final FMLInitializationEvent event) {
 		WailaHandler.register();
-		ModEnvironment.initialize();
 	}
 
 	public void postInit(@Nonnull final FMLPostInitializationEvent event) {

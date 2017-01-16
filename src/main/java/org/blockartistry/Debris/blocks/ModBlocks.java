@@ -44,16 +44,8 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
 
 public class ModBlocks {
 
-	public static BlockDebris debris = (BlockDebris) new BlockDebris("debris")
+	public static final BlockDebris DEBRIS = (BlockDebris) new BlockDebris("debris")
 			.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-	
-	public static void init() {
-		for(final ItemBlock itemBlock: RegistrationHandler.ITEM_BLOCKS) {
-			if (itemBlock.getBlock() instanceof BlockBase) {
-				((BlockBase) itemBlock.getBlock()).registerItemModel(itemBlock);
-			}
-		}
-	}
 
 	@Mod.EventBusSubscriber
 	public static class RegistrationHandler {
@@ -63,7 +55,7 @@ public class ModBlocks {
 		@SubscribeEvent
 		public static void registerBlocks(@Nonnull final RegistryEvent.Register<Block> event) {
 			final IForgeRegistry<Block> registry = event.getRegistry();
-			final BlockBase[] blocks = { debris };
+			final BlockBase[] blocks = { DEBRIS };
 
 			registry.registerAll(blocks);
 		}
@@ -71,19 +63,22 @@ public class ModBlocks {
 		@SubscribeEvent
 		public static void registerItemBlocks(@Nonnull final RegistryEvent.Register<Item> event) {
 			final IForgeRegistry<Item> registry = event.getRegistry();
-			final ItemBlock[] items = { new ItemMultiTexture(debris, debris, new Function<ItemStack, String>() {
+			final ItemBlock[] items = { new ItemMultiTexture(DEBRIS, DEBRIS, new Function<ItemStack, String>() {
 				@Override
 				public String apply(@Nonnull final ItemStack input) {
-					return ((BlockDebris) debris).getName(input);
+					return ((BlockDebris) DEBRIS).getName(input);
 				}
 			}) };
 
 			for (final ItemBlock item : items) {
 				registry.register(item.setRegistryName(item.getBlock().getRegistryName()));
+				if (item.getBlock() instanceof BlockBase) {
+					((BlockBase) item.getBlock()).registerItemModel(item);
+				}
 				ITEM_BLOCKS.add(item);
 			}
 		}
-		
+
 	}
 
 }

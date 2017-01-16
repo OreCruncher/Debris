@@ -28,7 +28,6 @@ import java.io.File;
 
 import javax.annotation.Nonnull;
 
-import org.apache.logging.log4j.LogManager;
 import org.blockartistry.Debris.proxy.Proxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.profiler.Profiler;
@@ -99,7 +98,7 @@ public class Debris {
 	}
 
 	public Debris() {
-		ModLog.setLogger(LogManager.getLogger(MOD_ID));
+
 	}
 
 	@EventHandler

@@ -26,6 +26,7 @@ package org.blockartistry.Debris.world;
 
 import org.blockartistry.Debris.ModOptions;
 import org.blockartistry.Debris.blocks.ModBlocks;
+import org.blockartistry.Debris.blocks.BlockDebris.EnumType;
 import org.blockartistry.Debris.util.MyUtils;
 
 import net.minecraft.block.state.IBlockState;
@@ -42,6 +43,7 @@ public final class BiomeDecorationHandler {
 	private static final int[] dimensionList = MyUtils.splitToInts(ModOptions.dimensionList, ',');
 	private static final boolean dimensionListBlack = ModOptions.dimensionListAsBlack;
 
+	private static final int GROUND_ADJUST = 2;
 	private static final int MIN_Y = 5;
 	private static final int PLACE_ATTEMPTS = 2;
 
@@ -77,7 +79,7 @@ public final class BiomeDecorationHandler {
 			// to be 64, which is the Overworld sea level.
 			final int groundLevel = event.getWorld().provider.getAverageGroundLevel();
 			final int attempts = (int) (ModOptions.rubbleDensity * ((float) groundLevel / 64F));
-			final int maxY = groundLevel - 4;
+			final int maxY = groundLevel - GROUND_ADJUST;
 			final int spread = maxY - MIN_Y;
 
 			// In case someone does something real funky with a
@@ -86,7 +88,7 @@ public final class BiomeDecorationHandler {
 				return;
 
 			final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-			final IBlockState state = ModBlocks.debris.getDefaultState();
+			final IBlockState state = ModBlocks.DEBRIS.getBlockState(EnumType.PILE_OF_RUBBLE);
 
 			for (int i = 0; i < attempts; i++) {
 
@@ -98,7 +100,7 @@ public final class BiomeDecorationHandler {
 
 				for (int j = 0; j < PLACE_ATTEMPTS; j++) {
 					if (event.getWorld().isAirBlock(pos)
-							&& ModBlocks.debris.canBlockStay(event.getWorld(), pos, state)) {
+							&& ModBlocks.DEBRIS.canBlockStay(event.getWorld(), pos, state)) {
 						event.getWorld().setBlockState(pos, state);
 						break;
 					}

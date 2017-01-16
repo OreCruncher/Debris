@@ -66,8 +66,13 @@ public final class ModOptions {
 	public static final String CONFIG_RUBBLE_DENSITY = "Rubble Density";
 	public static final String CONFIG_RUBBLE_ROLLS_MIN = "Rolls Min";
 	public static final String CONFIG_RUBBLE_ROLLS_MAX = "Rolls Max";
+	public static final String CONFIG_BONUS_ROLLS_MIN = "Bonus Rolls Min";
+	public static final String CONFIG_BONUS_ROLLS_MAX = "Bonus Rolls Max";
+	public static final String CONFIG_USE_LUCK = "Use Player Luck";
 	private static final List<String> generalSort = Arrays.asList(CONFIG_DIMENSION_LIST, CONFIG_AS_BLACKLIST,
-			CONFIG_RUBBLE_DENSITY, CONFIG_RUBBLE_ROLLS_MIN, CONFIG_RUBBLE_ROLLS_MAX);
+			CONFIG_RUBBLE_DENSITY, CONFIG_RUBBLE_ROLLS_MIN, CONFIG_RUBBLE_ROLLS_MAX,
+			CONFIG_BONUS_ROLLS_MIN,CONFIG_BONUS_ROLLS_MAX,
+			CONFIG_USE_LUCK);
 
 	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_DIMENSION_LIST, defaultValue = "-1,1", lang = "cfg.general.Dimensions")
 	@Comment("List of dimensions that will be black/white listed for generation")
@@ -89,6 +94,18 @@ public final class ModOptions {
 	@Comment("The maximum number of rolls when rubble is broken")
 	@MinMaxInt(min = 0)
 	public static int rubbleRollsMax = 3;
+	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_BONUS_ROLLS_MIN, defaultValue = "0", lang = "cfg.general.BonusRollsMin")
+	@Comment("The minimum number of bonus rolls because of player luck")
+	@MinMaxInt(min = 0)
+	public static int bonusRollsMin = 0;
+	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_BONUS_ROLLS_MAX, defaultValue = "1", lang = "cfg.general.BonusRollsMax")
+	@Comment("The maximum number of bonus rolls because of player luck")
+	@MinMaxInt(min = 0)
+	public static int bonusRollsMax = 1;
+	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_USE_LUCK, defaultValue = "true", lang = "cfg.general.UseLuck")
+	@Comment("Player Luck can influence the drops from rubble")
+	@RestartRequired
+	public static boolean useLuck = true;
 
 	public static void load(final Configuration config) {
 

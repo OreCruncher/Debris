@@ -33,6 +33,7 @@ import javax.annotation.Nullable;
 
 import org.blockartistry.Debris.Debris;
 import org.blockartistry.Debris.data.RubbleLootTable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
@@ -41,6 +42,7 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -106,7 +108,7 @@ public class BlockDebris extends BlockBase implements IVariants {
 			@Nonnull final IBlockState state) {
 		if (pos.getY() > 0 && pos.getY() < 256) {
 			final IBlockState downState = world.getBlockState(pos.down());
-			return downState.getBlock() != ModBlocks.debris && !downState.getBlock().isLeaves(downState, world, pos)
+			return downState.getBlock() != ModBlocks.DEBRIS && !downState.getBlock().isLeaves(downState, world, pos)
 					&& downState.isSideSolid(world, pos, EnumFacing.UP);
 		} else {
 			return false;
@@ -157,12 +159,12 @@ public class BlockDebris extends BlockBase implements IVariants {
 		final int metadata = stack.getMetadata();
 		return EnumType.byMetadata(metadata).getName();
 	}
-	
+
 	@Override
 	public String[] getVariantNames() {
 		return EnumType.getVariantNames();
 	}
-	
+
 	/**
 	 * returns a list of blocks with the same ID, but different meta (eg: wood
 	 * returns 4 blocks)
@@ -170,9 +172,14 @@ public class BlockDebris extends BlockBase implements IVariants {
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(@Nonnull final Item itemIn, @Nonnull final CreativeTabs tab,
 			@Nonnull final List<ItemStack> list) {
-		for (final BlockDebris.EnumType et : BlockDebris.EnumType.values()) {
+		for (final EnumType et : EnumType.values()) {
 			list.add(new ItemStack(itemIn, 1, et.getMetadata()));
 		}
+	}
+
+	@Nonnull
+	public IBlockState getBlockState(@Nonnull final EnumType type) {
+		return getStateFromMeta(type.meta);
 	}
 
 	/**
@@ -180,14 +187,14 @@ public class BlockDebris extends BlockBase implements IVariants {
 	 */
 	@Nonnull
 	public IBlockState getStateFromMeta(final int meta) {
-		return this.getDefaultState().withProperty(VARIANT, BlockDebris.EnumType.byMetadata(meta));
+		return this.getDefaultState().withProperty(VARIANT, EnumType.byMetadata(meta));
 	}
 
 	/**
 	 * Convert the BlockState into the correct metadata value
 	 */
 	public int getMetaFromState(@Nonnull final IBlockState state) {
-		return ((BlockDebris.EnumType) state.getValue(VARIANT)).getMetadata();
+		return ((EnumType) state.getValue(VARIANT)).getMetadata();
 	}
 
 	@Nonnull
@@ -196,10 +203,22 @@ public class BlockDebris extends BlockBase implements IVariants {
 	}
 
 	@Override
-	@Nonnull
-	public List<ItemStack> getDrops(@Nonnull final IBlockAccess world, @Nonnull final BlockPos pos,
-			@Nonnull final IBlockState state, final int fortune) {
-		return RubbleLootTable.getDrops(BlockDebris.EnumType.PILE_OF_RUBBLE, (World) world, RANDOM);
+	public void onBlockHarvested(@Nonnull final World world, @Nonnull final BlockPos pos,
+			@Nonnull final IBlockState state, @Nonnull final EntityPlayer player) {
+		if (world.isRemote)
+			return;
+
+		final EnumType type = ((EnumType) state.getValue(VARIANT));
+		final List<ItemStack> stacks = RubbleLootTable.getDrops(type, (World) world, player, RANDOM);
+		for (final ItemStack stack : stacks)
+			spawnAsEntity(world, pos, stack);
+	}
+
+	@Override
+	public void dropBlockAsItemWithChance(@Nonnull final World worldIn, @Nonnull final BlockPos pos,
+			@Nonnull final IBlockState state, final float chance, final int fortune) {
+		// Do nothing - block effect should have taken place in
+		// onBlockHarvested.
 	}
 
 	public static enum EnumType implements IStringSerializable {
@@ -256,7 +275,7 @@ public class BlockDebris extends BlockBase implements IVariants {
 		 * Returns an EnumType for the BlockState from a metadata value.
 		 */
 		@Nonnull
-		public static BlockDebris.EnumType byMetadata(int meta) {
+		public static EnumType byMetadata(int meta) {
 			if (meta < 0 || meta >= META_LOOKUP.length) {
 				meta = 0;
 			}
@@ -281,16 +300,16 @@ public class BlockDebris extends BlockBase implements IVariants {
 					return et;
 			return null;
 		}
-		
+
 		public static String[] getVariantNames() {
 			final List<String> result = new ArrayList<String>();
-			for(final EnumType et: values())
+			for (final EnumType et : values())
 				result.add(et.getName());
 			return result.toArray(new String[result.size()]);
 		}
 
 		static {
-			for (final BlockDebris.EnumType et : values()) {
+			for (final EnumType et : values()) {
 				META_LOOKUP[et.getMetadata()] = et;
 			}
 		}

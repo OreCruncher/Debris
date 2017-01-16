@@ -26,8 +26,6 @@ package org.blockartistry.Debris.proxy;
 
 import javax.annotation.Nonnull;
 
-import org.blockartistry.Debris.blocks.ModBlocks;
-import org.blockartistry.Debris.items.ModItems;
 import org.blockartistry.Debris.util.Localization;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -56,9 +54,6 @@ public class ProxyClient extends Proxy {
 	@Override
 	public void preInit(@Nonnull final FMLPreInitializationEvent event) {
 		super.preInit(event);
-		
-		ModBlocks.init();
-		ModItems.init();
 	}
 
 	@Override

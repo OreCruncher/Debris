@@ -24,50 +24,51 @@
 
 package org.blockartistry.Debris;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public final class ModLog {
 	
 	public static boolean DEBUGGING = false;
 
+	private static final Logger LOGGER = LogManager.getLogger(Debris.MOD_ID);
+
 	private ModLog() {
 	}
 
-	private static Logger logger;
-
-	public static Logger getLogger() {
-		return logger;
+	public static void info(@Nonnull final String msg, @Nullable final Object... parms) {
+		if (LOGGER != null)
+			LOGGER.info(String.format(msg, parms));
 	}
 
-	public static void setLogger(Logger log) {
-		logger = log;
+	public static void warn(@Nonnull final String msg, @Nullable final Object... parms) {
+		if (LOGGER != null)
+			LOGGER.warn(String.format(msg, parms));
 	}
 
-	public static void info(String msg, Object... parms) {
-		if (logger != null)
-			logger.info(String.format(msg, parms));
-	}
-
-	public static void warn(String msg, Object... parms) {
-		if (logger != null)
-			logger.warn(String.format(msg, parms));
-	}
-
-	public static void debug(String msg, Object... parms) {
-		if (logger != null && DEBUGGING) {
-			logger.info(String.format(msg, parms));
+	public static void debug(@Nonnull final String msg, @Nullable final Object... parms) {
+		if (LOGGER != null && DEBUGGING) {
+			LOGGER.info(String.format(msg, parms));
 		}
 	}
 
-	public static void error(String msg, Throwable e) {
-		if (logger != null)
-			logger.error(msg);
-		e.printStackTrace();
+	public static void error(@Nonnull final String msg) {
+		error(msg, null);
+	}
+	
+	public static void error(@Nonnull final String msg, @Nullable final Throwable e) {
+		if (LOGGER != null)
+			LOGGER.error(msg);
+		if(e != null)
+			e.printStackTrace();
 	}
 
-	public static void catching(Throwable t) {
-		if (logger != null) {
-			logger.catching(t);
+	public static void catching(@Nonnull final Throwable t) {
+		if (LOGGER != null) {
+			LOGGER.catching(t);
 			t.printStackTrace();
 		}
 	}

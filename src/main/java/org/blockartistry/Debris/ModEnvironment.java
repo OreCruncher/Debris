@@ -28,27 +28,23 @@ import javax.annotation.Nonnull;
 
 import net.minecraftforge.fml.common.Loader;
 
-/**
- * Helper enum to track mods that Dynamic Surroundings is interested in.
- */
 public enum ModEnvironment {
 
 	Forestry("forestry");
 	
 	protected final String modId;
-	protected boolean isLoaded;
 	
 	private ModEnvironment(@Nonnull final String modId) {
-		this.modId = modId;
+		this.modId = modId.toLowerCase();
 	}
 	
 	public boolean isLoaded() {
-		return this.isLoaded;
+		return Loader.isModLoaded(this.modId);
 	}
 	
-	public static void initialize() {
-		for(final ModEnvironment me: ModEnvironment.values())
-			me.isLoaded = Loader.isModLoaded(me.modId);
+	@Nonnull
+	public String getModId() {
+		return this.modId;
 	}
 
 }
