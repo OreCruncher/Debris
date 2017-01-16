@@ -14,6 +14,8 @@ cfg.logging.VersionCheck.tooltip=Display version update information on client lo
 
 cfg.general.cat.General=General Options
 cfg.general.cat.General.tooltip=Options to control world generation
+cfg.general.Enable=Enable World Gen
+cfg.general.Enable.tooltip=Enable generation of debris in the world
 cfg.general.Dimensions=Dimension List
 cfg.general.Dimensions.tooltip=List of dimensions that will be black/white listed for generation
 cfg.general.BlackList=Treat as Blacklist

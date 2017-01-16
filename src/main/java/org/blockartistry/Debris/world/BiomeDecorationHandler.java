@@ -72,6 +72,10 @@ public final class BiomeDecorationHandler {
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onWorldDecoration(final DecorateBiomeEvent.Decorate event) {
 
+		// Player/op may not want debris in world gen
+		if(!ModOptions.enableDebris)
+			return;
+		
 		if (isGenerationAllowed(event)) {
 
 			// Calculate the range and scaling based on

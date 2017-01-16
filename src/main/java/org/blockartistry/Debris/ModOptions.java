@@ -61,6 +61,7 @@ public final class ModOptions {
 	public static boolean enableVersionChecking = true;
 
 	public static final String CATEGORY_GENERAL = "general";
+	public static final String CONFIG_ENABLE = "Enable Debris";
 	public static final String CONFIG_DIMENSION_LIST = "Dimensions";
 	public static final String CONFIG_AS_BLACKLIST = "Dimensions as Blacklist";
 	public static final String CONFIG_RUBBLE_DENSITY = "Rubble Density";
@@ -69,11 +70,14 @@ public final class ModOptions {
 	public static final String CONFIG_BONUS_ROLLS_MIN = "Bonus Rolls Min";
 	public static final String CONFIG_BONUS_ROLLS_MAX = "Bonus Rolls Max";
 	public static final String CONFIG_USE_LUCK = "Use Player Luck";
-	private static final List<String> generalSort = Arrays.asList(CONFIG_DIMENSION_LIST, CONFIG_AS_BLACKLIST,
-			CONFIG_RUBBLE_DENSITY, CONFIG_RUBBLE_ROLLS_MIN, CONFIG_RUBBLE_ROLLS_MAX,
-			CONFIG_BONUS_ROLLS_MIN,CONFIG_BONUS_ROLLS_MAX,
-			CONFIG_USE_LUCK);
+	private static final List<String> generalSort = Arrays.asList(CONFIG_ENABLE, CONFIG_DIMENSION_LIST,
+			CONFIG_AS_BLACKLIST, CONFIG_RUBBLE_DENSITY, CONFIG_RUBBLE_ROLLS_MIN, CONFIG_RUBBLE_ROLLS_MAX,
+			CONFIG_BONUS_ROLLS_MIN, CONFIG_BONUS_ROLLS_MAX, CONFIG_USE_LUCK);
 
+	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_ENABLE, defaultValue = "true", lang = "cfg.general.Enable")
+	@Comment("Enables Debris in world gen")
+	@RestartRequired
+	public static boolean enableDebris = true;
 	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_DIMENSION_LIST, defaultValue = "-1,1", lang = "cfg.general.Dimensions")
 	@Comment("List of dimensions that will be black/white listed for generation")
 	@RestartRequired
