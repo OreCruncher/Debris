@@ -24,22 +24,23 @@
 
 package org.blockartistry.Debris.data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import javax.annotation.Nonnull;
 
-import org.blockartistry.Debris.Debris;
 import org.blockartistry.Debris.ModEnvironment;
 import org.blockartistry.Debris.ModLog;
+import org.blockartistry.Debris.ModOptions;
+import org.blockartistry.Debris.blocks.BlockDebris;
 import org.blockartistry.Debris.util.JUtils;
+
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.loot.LootContext;
@@ -54,6 +55,7 @@ import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraft.world.storage.loot.functions.LootFunctionManager;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -71,33 +73,34 @@ public class RubbleLootTable {
 	private static final TypeToken<List<LootEntry>> TOKEN_TYPE = new TypeToken<List<LootEntry>>() {
 	};
 
-	private static ResourceLocation tableName;
-
 	static {
 	}
 
 	public static void init() {
-		tableName = LootTableList.register(new ResourceLocation(Debris.RESOURCE_ID, "pileOfRubble"));
+		for (final BlockDebris.EnumType rt : BlockDebris.EnumType.values())
+			LootTableList.register(rt.getResource());
 	}
 
 	@Nonnull
-	public static List<ItemStack> getDrops(@Nonnull final World world, final int count, @Nonnull final Random rand) {
-		final List<ItemStack> result = new ArrayList<ItemStack>();
-		final LootTable table = world.getLootTableManager().getLootTableFromLocation(tableName);
-
+	public static List<ItemStack> getDrops(@Nonnull final BlockDebris.EnumType rt, @Nonnull final World world,
+			@Nonnull final Random rand) {
+		final LootTable table = world.getLootTableManager().getLootTableFromLocation(rt.getResource());
 		if (table != null) {
 			final LootContext.Builder builder = new LootContext.Builder((WorldServer) world);
-			for (int i = 0; i < count; i++) {
-				result.addAll(table.generateLootForPools(rand, builder.build()));
-			}
+			return table.generateLootForPools(rand, builder.build());
 		}
-		return result;
+		return ImmutableList.of();
 	}
 
-	private static boolean duplicateCheck(@Nonnull final LootPool pool, @Nonnull final LootEntry entry) {
+	private static boolean duplicateCheck(@Nonnull final String modId, @Nonnull final LootPool pool,
+			@Nonnull final LootEntry entry, final boolean remove) {
 		if (pool.getEntry(entry.getEntryName()) != null) {
-			ModLog.warn("Duplicate entry [%s] detected for pool [%s]", entry.getEntryName(), pool.getName());
-			return false;
+			ModLog.warn("Duplicate entry [%s] from [%s] detected for pool [%s]", entry.getEntryName(), modId,
+					pool.getName());
+			if (remove)
+				pool.removeEntry(entry.getEntryName());
+			else
+				return false;
 		}
 		return true;
 	}
@@ -106,7 +109,7 @@ public class RubbleLootTable {
 		try {
 			final List<LootEntry> entries = (List<LootEntry>) JUtils.load(modId, GSON_INSTANCE, TOKEN_TYPE);
 			for (final LootEntry le : entries)
-				if (duplicateCheck(pool, le))
+				if (duplicateCheck(modId, pool, le, true))
 					pool.addEntry(le);
 		} catch (final Throwable t) {
 			ModLog.warn("Unable to process loot table from [%s]", modId);
@@ -128,14 +131,17 @@ public class RubbleLootTable {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = false)
 	public static void onLootTableLoad(@Nonnull final LootTableLoadEvent event) {
-		if (event.getName().equals(tableName)) {
+		final BlockDebris.EnumType rt = BlockDebris.EnumType.find(event.getName());
+		if (rt != null) {
 			final LootPool pool = event.getTable().getPool("main");
 			if (pool == null) {
-				ModLog.warn("Can't find pool [main] in loot table [pileOfRubble]");
+				ModLog.warn("Can't find pool [main] in loot table [%s]", rt.name());
 				return;
 			}
+
+			pool.setRolls(new RandomValueRange(ModOptions.rubbleRollsMin, ModOptions.rubbleRollsMax));
 
 			applyDictionary(pool, "oreCopper", 50, 1, 2);
 			applyDictionary(pool, "oreTin", 50, 1, 2);

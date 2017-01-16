@@ -27,7 +27,6 @@ package org.blockartistry.Debris.proxy;
 import javax.annotation.Nonnull;
 
 import org.blockartistry.Debris.ModEnvironment;
-import org.blockartistry.Debris.blocks.ModBlocks;
 import org.blockartistry.Debris.data.RubbleLootTable;
 import org.blockartistry.Debris.items.ModItems;
 import org.blockartistry.Debris.util.Localization;
@@ -60,7 +59,6 @@ public class Proxy {
 		registerLanguage();
 		
 		ModItems.init();
-		ModBlocks.init();
 		
 		BiomeDecorationHandler.init();
 		RubbleLootTable.init();

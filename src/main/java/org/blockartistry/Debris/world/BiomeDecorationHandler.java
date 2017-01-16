@@ -86,7 +86,7 @@ public final class BiomeDecorationHandler {
 				return;
 
 			final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-			final IBlockState state = ModBlocks.pileOfRubble.getDefaultState();
+			final IBlockState state = ModBlocks.debris.getDefaultState();
 
 			for (int i = 0; i < attempts; i++) {
 
@@ -98,7 +98,7 @@ public final class BiomeDecorationHandler {
 
 				for (int j = 0; j < PLACE_ATTEMPTS; j++) {
 					if (event.getWorld().isAirBlock(pos)
-							&& ModBlocks.pileOfRubble.canBlockStay(event.getWorld(), pos, state)) {
+							&& ModBlocks.debris.canBlockStay(event.getWorld(), pos, state)) {
 						event.getWorld().setBlockState(pos, state);
 						break;
 					}

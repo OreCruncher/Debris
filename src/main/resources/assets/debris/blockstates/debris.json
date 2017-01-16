@@ -1,0 +1,10 @@
+{
+	"forge_marker": 1,
+	"variants": {
+		"variant": {
+			"pile_of_rubble": {
+				"model": "debris:pile_of_rubble"
+			}
+		}
+	}
+}

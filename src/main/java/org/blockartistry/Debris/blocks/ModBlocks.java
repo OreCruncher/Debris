@@ -23,38 +23,67 @@
  */
 
 package org.blockartistry.Debris.blocks;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.Nonnull;
+
+import com.google.common.base.Function;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraft.item.ItemMultiTexture;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.IForgeRegistry;
 
 public class ModBlocks {
 
-	public static BlockRubble pileOfRubble;
+	public static BlockDebris debris = (BlockDebris) new BlockDebris("debris")
+			.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
 	
 	public static void init() {
-		pileOfRubble = (BlockRubble) register(new BlockRubble("pileOfRubble").setCreativeTab(CreativeTabs.BUILDING_BLOCKS));
+		for(final ItemBlock itemBlock: RegistrationHandler.ITEM_BLOCKS) {
+			if (itemBlock.getBlock() instanceof BlockBase) {
+				((BlockBase) itemBlock.getBlock()).registerItemModel(itemBlock);
+			}
+		}
 	}
 
-	@Nonnull
-	private static <T extends Block> T register(@Nonnull final T block, @Nonnull final ItemBlock itemBlock) {
-		GameRegistry.register(block);
-		GameRegistry.register(itemBlock);
+	@Mod.EventBusSubscriber
+	public static class RegistrationHandler {
 
-		if (block instanceof BlockBase) {
-			((BlockBase)block).registerItemModel(itemBlock);
+		public static final Set<ItemBlock> ITEM_BLOCKS = new HashSet<>();
+
+		@SubscribeEvent
+		public static void registerBlocks(@Nonnull final RegistryEvent.Register<Block> event) {
+			final IForgeRegistry<Block> registry = event.getRegistry();
+			final BlockBase[] blocks = { debris };
+
+			registry.registerAll(blocks);
 		}
 
-		return block;
-	}
+		@SubscribeEvent
+		public static void registerItemBlocks(@Nonnull final RegistryEvent.Register<Item> event) {
+			final IForgeRegistry<Item> registry = event.getRegistry();
+			final ItemBlock[] items = { new ItemMultiTexture(debris, debris, new Function<ItemStack, String>() {
+				@Override
+				public String apply(@Nonnull final ItemStack input) {
+					return ((BlockDebris) debris).getName(input);
+				}
+			}) };
 
-	@Nonnull
-	private static <T extends Block> T register(@Nonnull final T block) {
-		ItemBlock itemBlock = new ItemBlock(block);
-		itemBlock.setRegistryName(block.getRegistryName());
-		return register(block, itemBlock);
+			for (final ItemBlock item : items) {
+				registry.register(item.setRegistryName(item.getBlock().getRegistryName()));
+				ITEM_BLOCKS.add(item);
+			}
+		}
+		
 	}
 
 }

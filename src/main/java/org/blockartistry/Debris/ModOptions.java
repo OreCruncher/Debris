@@ -64,9 +64,10 @@ public final class ModOptions {
 	public static final String CONFIG_DIMENSION_LIST = "Dimensions";
 	public static final String CONFIG_AS_BLACKLIST = "Dimensions as Blacklist";
 	public static final String CONFIG_RUBBLE_DENSITY = "Rubble Density";
-	public static final String CONFIG_RUBBLE_DROP_COUNT = "Drop Count";
+	public static final String CONFIG_RUBBLE_ROLLS_MIN = "Rolls Min";
+	public static final String CONFIG_RUBBLE_ROLLS_MAX = "Rolls Max";
 	private static final List<String> generalSort = Arrays.asList(CONFIG_DIMENSION_LIST, CONFIG_AS_BLACKLIST,
-			CONFIG_RUBBLE_DENSITY,CONFIG_RUBBLE_DROP_COUNT);
+			CONFIG_RUBBLE_DENSITY, CONFIG_RUBBLE_ROLLS_MIN, CONFIG_RUBBLE_ROLLS_MAX);
 
 	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_DIMENSION_LIST, defaultValue = "-1,1", lang = "cfg.general.Dimensions")
 	@Comment("List of dimensions that will be black/white listed for generation")
@@ -80,10 +81,14 @@ public final class ModOptions {
 	@Comment("Density of rubble within a chunk")
 	@MinMaxInt(min = 0)
 	public static float rubbleDensity = 80;
-	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_RUBBLE_DROP_COUNT, defaultValue = "3", lang = "cfg.general.DropCount")
-	@Comment("The number of drops to make when rubble is broken")
+	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_RUBBLE_ROLLS_MIN, defaultValue = "3", lang = "cfg.general.RollsMin")
+	@Comment("The minimum number of rolls when rubble is broken")
 	@MinMaxInt(min = 0)
-	public static int rubbleDropCount = 3;
+	public static int rubbleRollsMin = 3;
+	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_RUBBLE_ROLLS_MAX, defaultValue = "3", lang = "cfg.general.RollsMax")
+	@Comment("The maximum number of rolls when rubble is broken")
+	@MinMaxInt(min = 0)
+	public static int rubbleRollsMax = 3;
 
 	public static void load(final Configuration config) {
 

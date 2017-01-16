@@ -26,42 +26,9 @@ package org.blockartistry.Debris.blocks;
 
 import javax.annotation.Nonnull;
 
-import org.blockartistry.Debris.Debris;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemBlock;
-
-public class BlockBase extends Block {
-
-	protected final String name;
-
-	public BlockBase(@Nonnull final Material material, @Nonnull final String name) {
-		super(material);
-
-		this.name = name;
-
-		setUnlocalizedName(name);
-		setRegistryName(name);
-	}
-
-	public void registerItemModel(@Nonnull final ItemBlock itemBlock) {
-		final Block block = itemBlock.getBlock();
-		if (block instanceof IVariants) {
-			final String[] variants = ((IVariants) block).getVariantNames();
-			for (int i = 0; i < variants.length; i++)
-				Debris.proxy().registerItemRenderer(itemBlock, i, variants[i]);
-		} else {
-			Debris.proxy().registerItemRenderer(itemBlock, 0, this.name);
-		}
-	}
-
-	@Override
+public interface IVariants {
+	
 	@Nonnull
-	public BlockBase setCreativeTab(@Nonnull final CreativeTabs tab) {
-		super.setCreativeTab(tab);
-		return this;
-	}
+	public String[] getVariantNames();
 
 }

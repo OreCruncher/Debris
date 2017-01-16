@@ -1,5 +1,5 @@
 # Blocks
-tile.pileOfRubble.name=Pile of Rubble
+tile.debris.pile_of_rubble.name=Pile of Rubble
 
 # Version checking strings
 msg.NewVersion.debris=["§6Update Available: §9[",{"text":"§2%1$s §ev%2$s§f","color":"gold","hoverEvent":{"action":"show_text","value":{"text":"Click for CurseForge Project Page","color":"aqua"}},"clickEvent":{"action":"open_url","value":"%3$s"}},"§9]"]
@@ -18,5 +18,7 @@ cfg.general.Dimensions=Dimension List
 cfg.general.Dimensions.tooltip=List of dimensions that will be black/white listed for generation
 cfg.general.BlackList=Treat as Blacklist
 cfg.general.BlaclList.tooltip=Treat the Dimension List as a black list
-cfg.general.DropCount=Drop Count
-cfg.general.DropCount.tooltip=Number of attempts at the loot table generating drops when rubble is broken
+cfg.general.RollsMin=Minimum Rolls
+cfg.general.RollsMin.tooltip=The minimum number of rolls when rubble is broken
+cfg.general.RollsMax=Maximum Rolls
+cfg.general.RollsMax.tooltip=The maximum number of rolls when rubble is broken
