@@ -38,6 +38,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -59,7 +60,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockDebris extends BlockBase implements IVariants {
 
-	public static final PropertyEnum<EnumType> VARIANT = PropertyEnum.<EnumType>create("variant", EnumType.class);
+	public static final PropertyEnum<Variant> VARIANT = PropertyEnum.<Variant>create("variant", Variant.class);
+	public static final PropertyEnum<Facing> FACING = PropertyEnum.<Facing>create("facing", Facing.class);
 
 	protected static final AxisAlignedBB DEBRIS_AABB = new AxisAlignedBB(0.0625F, 0.0F, 0.0625F, 0.9375F, 0.375F,
 			0.9375F);
@@ -72,7 +74,8 @@ public class BlockDebris extends BlockBase implements IVariants {
 		this.setHardness(2F);
 		this.setResistance(10F);
 
-		this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockDebris.EnumType.PILE_OF_RUBBLE));
+		this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockDebris.Variant.PILE_OF_RUBBLE)
+				.withProperty(FACING, Facing.NORTH));
 	}
 
 	@Override
@@ -157,12 +160,12 @@ public class BlockDebris extends BlockBase implements IVariants {
 	@Nonnull
 	public String getName(@Nonnull final ItemStack stack) {
 		final int metadata = stack.getMetadata();
-		return EnumType.byMetadata(metadata).getName();
+		return Variant.byMetadata(metadata).getName();
 	}
 
 	@Override
 	public String[] getVariantNames() {
-		return EnumType.getVariantNames();
+		return Variant.getVariantNames();
 	}
 
 	/**
@@ -172,13 +175,13 @@ public class BlockDebris extends BlockBase implements IVariants {
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(@Nonnull final Item itemIn, @Nonnull final CreativeTabs tab,
 			@Nonnull final List<ItemStack> list) {
-		for (final EnumType et : EnumType.values()) {
+		for (final Variant et : Variant.values()) {
 			list.add(new ItemStack(itemIn, 1, et.getMetadata()));
 		}
 	}
 
 	@Nonnull
-	public IBlockState getBlockState(@Nonnull final EnumType type) {
+	public IBlockState getBlockState(@Nonnull final Variant type) {
 		return getStateFromMeta(type.meta);
 	}
 
@@ -187,19 +190,21 @@ public class BlockDebris extends BlockBase implements IVariants {
 	 */
 	@Nonnull
 	public IBlockState getStateFromMeta(final int meta) {
-		return this.getDefaultState().withProperty(VARIANT, EnumType.byMetadata(meta));
+		return this.getDefaultState().withProperty(FACING, getFacing(meta)).withProperty(VARIANT, getVariant(meta));
 	}
 
 	/**
 	 * Convert the BlockState into the correct metadata value
 	 */
 	public int getMetaFromState(@Nonnull final IBlockState state) {
-		return ((EnumType) state.getValue(VARIANT)).getMetadata();
+		final int variantMeta = state.getValue(VARIANT).getMetadata();
+		final int directionMeta = state.getValue(FACING).getMetadata();
+		return (variantMeta << 2) | directionMeta;
 	}
 
 	@Nonnull
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, VARIANT);
+		return new BlockStateContainer(this, new IProperty[] { VARIANT, FACING });
 	}
 
 	@Override
@@ -208,7 +213,7 @@ public class BlockDebris extends BlockBase implements IVariants {
 		if (world.isRemote)
 			return;
 
-		final EnumType type = ((EnumType) state.getValue(VARIANT));
+		final Variant type = ((Variant) state.getValue(VARIANT));
 		final List<ItemStack> stacks = RubbleLootTable.getDrops(type, (World) world, player, RANDOM);
 		for (final ItemStack stack : stacks)
 			spawnAsEntity(world, pos, stack);
@@ -221,26 +226,82 @@ public class BlockDebris extends BlockBase implements IVariants {
 		// onBlockHarvested.
 	}
 
-	public static enum EnumType implements IStringSerializable {
+	@Nonnull
+	public static Facing getFacing(final int meta) {
+		return Facing.byMetadata((meta >> 2) & 3);
+	}
+
+	@Nonnull
+	public static Variant getVariant(final int meta) {
+		return Variant.byMetadata(meta & 3);
+	}
+
+	public static enum Facing implements IStringSerializable {
+
+		NORTH(0, "north", EnumFacing.NORTH), SOUTH(1, "south", EnumFacing.SOUTH), WEST(2, "east",
+				EnumFacing.WEST), EAST(3, "west", EnumFacing.EAST)
+
+		;
+
+		private static final Facing[] META_LOOKUP = new Facing[values().length];
+
+		private final String name;
+		private final int meta;
+		private final EnumFacing facing;
+
+		private Facing(final int meta, @Nonnull final String name, @Nonnull final EnumFacing facing) {
+			this.name = name;
+			this.meta = meta;
+			this.facing = facing;
+		}
+
+		public int getMetadata() {
+			return this.meta;
+		}
+
+		public EnumFacing getFacing() {
+			return this.facing;
+		}
+
+		@Override
+		public String getName() {
+			return this.name;
+		}
+
+		@Nonnull
+		public static Facing byMetadata(int meta) {
+			if (meta < 0 || meta >= META_LOOKUP.length) {
+				meta = 0;
+			}
+
+			return META_LOOKUP[meta];
+		}
+
+		static {
+			for (final Facing f : values()) {
+				META_LOOKUP[f.getMetadata()] = f;
+			}
+		}
+	}
+
+	public static enum Variant implements IStringSerializable {
 
 		PILE_OF_RUBBLE(0, MapColor.STONE, "pile_of_rubble");
 
 		private final ResourceLocation res;
 
-		/** Array of the Block's BlockStates */
-		private static final BlockDebris.EnumType[] META_LOOKUP = new BlockDebris.EnumType[values().length];
-		/** The BlockState's metadata. */
+		private static final Variant[] META_LOOKUP = new Variant[values().length];
+
 		private final int meta;
-		/** The EnumType's name. */
 		private final String name;
 		private final String unlocalizedName;
 		private final MapColor mapColor;
 
-		private EnumType(int meta, MapColor mapColor, String name) {
+		private Variant(int meta, MapColor mapColor, String name) {
 			this(meta, mapColor, name, name);
 		}
 
-		private EnumType(int meta, MapColor mapColor, String name, String unlocalizedName) {
+		private Variant(int meta, MapColor mapColor, String name, String unlocalizedName) {
 			this.meta = meta;
 			this.name = name;
 			this.unlocalizedName = unlocalizedName;
@@ -250,7 +311,7 @@ public class BlockDebris extends BlockBase implements IVariants {
 		}
 
 		/**
-		 * Returns the EnumType's metadata value.
+		 * Returns the Variant's metadata value.
 		 */
 		public int getMetadata() {
 			return this.meta;
@@ -271,11 +332,8 @@ public class BlockDebris extends BlockBase implements IVariants {
 			return getName();
 		}
 
-		/**
-		 * Returns an EnumType for the BlockState from a metadata value.
-		 */
 		@Nonnull
-		public static EnumType byMetadata(int meta) {
+		public static Variant byMetadata(int meta) {
 			if (meta < 0 || meta >= META_LOOKUP.length) {
 				meta = 0;
 			}
@@ -294,8 +352,8 @@ public class BlockDebris extends BlockBase implements IVariants {
 		}
 
 		@Nullable
-		public static EnumType find(@Nonnull final ResourceLocation res) {
-			for (final EnumType et : values())
+		public static Variant find(@Nonnull final ResourceLocation res) {
+			for (final Variant et : values())
 				if (et.getResource().equals(res))
 					return et;
 			return null;
@@ -303,13 +361,13 @@ public class BlockDebris extends BlockBase implements IVariants {
 
 		public static String[] getVariantNames() {
 			final List<String> result = new ArrayList<String>();
-			for (final EnumType et : values())
+			for (final Variant et : values())
 				result.add(et.getName());
 			return result.toArray(new String[result.size()]);
 		}
 
 		static {
-			for (final EnumType et : values()) {
+			for (final Variant et : values()) {
 				META_LOOKUP[et.getMetadata()] = et;
 			}
 		}

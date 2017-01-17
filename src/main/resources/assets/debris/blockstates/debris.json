@@ -5,6 +5,19 @@
 			"pile_of_rubble": {
 				"model": "debris:pile_of_rubble"
 			}
+		},
+		"facing": {
+			"north": {
+			},
+			"south": {
+				"y": 180
+			},
+			"east": {
+				"y": 90
+			},
+			"west": {
+				"y": 270
+			}
 		}
 	}
 }

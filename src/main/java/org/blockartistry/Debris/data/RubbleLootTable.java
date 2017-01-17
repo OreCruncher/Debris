@@ -61,12 +61,12 @@ public class RubbleLootTable {
 	}
 
 	public static void init() {
-		for (final BlockDebris.EnumType rt : BlockDebris.EnumType.values())
+		for (final BlockDebris.Variant rt : BlockDebris.Variant.values())
 			LootTableList.register(rt.getResource());
 	}
 
 	@Nonnull
-	public static List<ItemStack> getDrops(@Nonnull final BlockDebris.EnumType rt, @Nonnull final World world,
+	public static List<ItemStack> getDrops(@Nonnull final BlockDebris.Variant rt, @Nonnull final World world,
 			@Nullable final EntityPlayer player, @Nonnull final Random rand) {
 		final LootTable table = world.getLootTableManager().getLootTableFromLocation(rt.getResource());
 		if (table != null) {
@@ -106,7 +106,7 @@ public class RubbleLootTable {
 
 	@SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = false)
 	public static void onLootTableLoad(@Nonnull final LootTableLoadEvent event) {
-		final BlockDebris.EnumType rt = BlockDebris.EnumType.find(event.getName());
+		final BlockDebris.Variant rt = BlockDebris.Variant.find(event.getName());
 		if (rt != null) {
 			final LootPool pool = event.getTable().getPool(Loot.BUILTIN_LOOTPOOL_NAME);
 			if (pool == null) {

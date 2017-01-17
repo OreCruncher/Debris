@@ -26,7 +26,7 @@ package org.blockartistry.Debris.world;
 
 import org.blockartistry.Debris.ModOptions;
 import org.blockartistry.Debris.blocks.ModBlocks;
-import org.blockartistry.Debris.blocks.BlockDebris.EnumType;
+import org.blockartistry.Debris.blocks.BlockDebris.Variant;
 import org.blockartistry.Debris.util.MyUtils;
 
 import net.minecraft.block.state.IBlockState;
@@ -92,7 +92,7 @@ public final class BiomeDecorationHandler {
 				return;
 
 			final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-			final IBlockState state = ModBlocks.DEBRIS.getBlockState(EnumType.PILE_OF_RUBBLE);
+			final IBlockState state = ModBlocks.DEBRIS.getBlockState(Variant.PILE_OF_RUBBLE);
 
 			for (int i = 0; i < attempts; i++) {
 
