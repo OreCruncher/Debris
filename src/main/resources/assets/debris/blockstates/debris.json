@@ -1,9 +1,30 @@
 {
 	"forge_marker": 1,
 	"variants": {
+		"item": {
+			"true": {
+				"model": "debris:item/generated",
+				"textures": {
+					"layer0": "#tex"
+				}
+			},
+			"false": {
+				"model": "minecraft:cross",
+				"textures": {
+					"cross": "#tex"
+				}
+			}
+		},
 		"variant": {
 			"pile_of_rubble": {
-				"model": "debris:pile_of_rubble"
+				"textures": {
+					"tex": "debris:blocks/pileOfRubble"
+				}
+			},
+			"bone_pile": {
+				"textures": {
+					"tex": "minecraft:items/bone"
+				}
 			}
 		},
 		"facing": {

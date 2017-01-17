@@ -22,13 +22,11 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.Debris.blocks;
+package org.blockartistry.Debris.util;
 
-import javax.annotation.Nonnull;
+import net.minecraft.util.IStringSerializable;
 
-public interface IVariants {
-	
-	@Nonnull
-	public String[] getVariantNames();
+public interface IVariant extends IStringSerializable {
 
+	int getMeta();
 }

@@ -26,8 +26,6 @@ package org.blockartistry.Debris.items;
 
 import javax.annotation.Nonnull;
 
-import org.blockartistry.Debris.Debris;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
@@ -40,10 +38,6 @@ public class ItemBase extends Item {
 		
 		setUnlocalizedName(name);
 		setRegistryName(name);
-	}
-
-	public void registerItemModel() {
-		Debris.proxy().registerItemRenderer(this, 0, this.name);
 	}
 
 	@Override

@@ -29,14 +29,11 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Function;
-
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMultiTexture;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -63,18 +60,10 @@ public class ModBlocks {
 		@SubscribeEvent
 		public static void registerItemBlocks(@Nonnull final RegistryEvent.Register<Item> event) {
 			final IForgeRegistry<Item> registry = event.getRegistry();
-			final ItemBlock[] items = { new ItemMultiTexture(DEBRIS, DEBRIS, new Function<ItemStack, String>() {
-				@Override
-				public String apply(@Nonnull final ItemStack input) {
-					return ((BlockDebris) DEBRIS).getName(input);
-				}
-			}) };
+			final ItemBlock[] items = { new ItemMultiTexture(DEBRIS, DEBRIS, BlockDebris.Variant.getVariantNames()) };
 
 			for (final ItemBlock item : items) {
 				registry.register(item.setRegistryName(item.getBlock().getRegistryName()));
-				if (item.getBlock() instanceof BlockBase) {
-					((BlockBase) item.getBlock()).registerItemModel(item);
-				}
 				ITEM_BLOCKS.add(item);
 			}
 		}

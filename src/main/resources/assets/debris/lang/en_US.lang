@@ -1,5 +1,6 @@
 # Blocks
 tile.debris.pile_of_rubble.name=Pile of Rubble
+tile.debris.bone_pile.name=Pile of Bones
 
 # Version checking strings
 msg.NewVersion.debris=["§6Update Available: §9[",{"text":"§2%1$s §ev%2$s§f","color":"gold","hoverEvent":{"action":"show_text","value":{"text":"Click for CurseForge Project Page","color":"aqua"}},"clickEvent":{"action":"open_url","value":"%3$s"}},"§9]"]

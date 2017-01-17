@@ -24,26 +24,10 @@
 
 package org.blockartistry.Debris.items;
 
-import javax.annotation.Nonnull;
-
-import net.minecraft.item.Item;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-
 public class ModItems {
 	
 	public static void init() {
 
-	}
-
-	@Nonnull
-	private static <T extends Item> T register(@Nonnull final T item) {
-		GameRegistry.register(item);
-
-		if (item instanceof ItemBase) {
-			((ItemBase)item).registerItemModel();
-		}
-
-		return item;
 	}
 
 }

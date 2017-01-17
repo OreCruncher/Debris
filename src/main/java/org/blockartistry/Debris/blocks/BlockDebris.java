@@ -33,12 +33,14 @@ import javax.annotation.Nullable;
 
 import org.blockartistry.Debris.Debris;
 import org.blockartistry.Debris.data.RubbleLootTable;
+import org.blockartistry.Debris.util.IVariant;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -58,10 +60,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockDebris extends BlockBase implements IVariants {
+public class BlockDebris extends BlockBase {
 
 	public static final PropertyEnum<Variant> VARIANT = PropertyEnum.<Variant>create("variant", Variant.class);
 	public static final PropertyEnum<Facing> FACING = PropertyEnum.<Facing>create("facing", Facing.class);
+	public static final PropertyBool ITEM = PropertyBool.create("item");
 
 	protected static final AxisAlignedBB DEBRIS_AABB = new AxisAlignedBB(0.0625F, 0.0F, 0.0625F, 0.9375F, 0.375F,
 			0.9375F);
@@ -75,7 +78,7 @@ public class BlockDebris extends BlockBase implements IVariants {
 		this.setResistance(10F);
 
 		this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockDebris.Variant.PILE_OF_RUBBLE)
-				.withProperty(FACING, Facing.NORTH));
+				.withProperty(FACING, Facing.NORTH).withProperty(ITEM, false));
 	}
 
 	@Override
@@ -90,6 +93,11 @@ public class BlockDebris extends BlockBase implements IVariants {
 	public AxisAlignedBB getCollisionBoundingBox(@Nonnull final IBlockState blockState, @Nonnull final World worldIn,
 			@Nonnull final BlockPos pos) {
 		return DEBRIS_AABB;
+	}
+
+	@Override
+	public int damageDropped(@Nonnull final IBlockState state) {
+		return state.getValue(VARIANT).getMeta();
 	}
 
 	@Override
@@ -160,12 +168,7 @@ public class BlockDebris extends BlockBase implements IVariants {
 	@Nonnull
 	public String getName(@Nonnull final ItemStack stack) {
 		final int metadata = stack.getMetadata();
-		return Variant.byMetadata(metadata).getName();
-	}
-
-	@Override
-	public String[] getVariantNames() {
-		return Variant.getVariantNames();
+		return getVariant(metadata).getName();
 	}
 
 	/**
@@ -176,13 +179,13 @@ public class BlockDebris extends BlockBase implements IVariants {
 	public void getSubBlocks(@Nonnull final Item itemIn, @Nonnull final CreativeTabs tab,
 			@Nonnull final List<ItemStack> list) {
 		for (final Variant et : Variant.values()) {
-			list.add(new ItemStack(itemIn, 1, et.getMetadata()));
+			list.add(new ItemStack(itemIn, 1, et.getMeta()));
 		}
 	}
 
 	@Nonnull
 	public IBlockState getBlockState(@Nonnull final Variant type) {
-		return getStateFromMeta(type.meta);
+		return this.getDefaultState().withProperty(VARIANT, type);
 	}
 
 	/**
@@ -197,14 +200,14 @@ public class BlockDebris extends BlockBase implements IVariants {
 	 * Convert the BlockState into the correct metadata value
 	 */
 	public int getMetaFromState(@Nonnull final IBlockState state) {
-		final int variantMeta = state.getValue(VARIANT).getMetadata();
+		final int variantMeta = state.getValue(VARIANT).getMeta();
 		final int directionMeta = state.getValue(FACING).getMetadata();
-		return (variantMeta << 2) | directionMeta;
+		return (directionMeta << 2) | variantMeta;
 	}
 
 	@Nonnull
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[] { VARIANT, FACING });
+		return new BlockStateContainer(this, new IProperty[] { VARIANT, FACING, ITEM });
 	}
 
 	@Override
@@ -213,7 +216,7 @@ public class BlockDebris extends BlockBase implements IVariants {
 		if (world.isRemote)
 			return;
 
-		final Variant type = ((Variant) state.getValue(VARIANT));
+		final Variant type = state.getValue(VARIANT);
 		final List<ItemStack> stacks = RubbleLootTable.getDrops(type, (World) world, player, RANDOM);
 		for (final ItemStack stack : stacks)
 			spawnAsEntity(world, pos, stack);
@@ -284,9 +287,9 @@ public class BlockDebris extends BlockBase implements IVariants {
 		}
 	}
 
-	public static enum Variant implements IStringSerializable {
+	public static enum Variant implements IVariant {
 
-		PILE_OF_RUBBLE(0, MapColor.STONE, "pile_of_rubble");
+		PILE_OF_RUBBLE(0, MapColor.STONE, "pile_of_rubble"), BONE_PILE(1, MapColor.STONE, "bone_pile");
 
 		private final ResourceLocation res;
 
@@ -313,7 +316,7 @@ public class BlockDebris extends BlockBase implements IVariants {
 		/**
 		 * Returns the Variant's metadata value.
 		 */
-		public int getMetadata() {
+		public int getMeta() {
 			return this.meta;
 		}
 
@@ -368,7 +371,7 @@ public class BlockDebris extends BlockBase implements IVariants {
 
 		static {
 			for (final Variant et : values()) {
-				META_LOOKUP[et.getMetadata()] = et;
+				META_LOOKUP[et.getMeta()] = et;
 			}
 		}
 	}
