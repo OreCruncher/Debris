@@ -30,6 +30,8 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -41,8 +43,8 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
 
 public class ModBlocks {
 
-	public static final BlockDebris DEBRIS = (BlockDebris) new BlockDebris("debris")
-			.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+	public static final BlockDebrisVariant DEBRIS = (BlockDebrisVariant) new BlockDebrisVariant(Material.ROCK, "debris")
+			.setSound(SoundType.GROUND).setHardness(2F).setResistance(10F).setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
 
 	@Mod.EventBusSubscriber
 	public static class RegistrationHandler {
@@ -60,7 +62,8 @@ public class ModBlocks {
 		@SubscribeEvent
 		public static void registerItemBlocks(@Nonnull final RegistryEvent.Register<Item> event) {
 			final IForgeRegistry<Item> registry = event.getRegistry();
-			final ItemBlock[] items = { new ItemMultiTexture(DEBRIS, DEBRIS, BlockDebris.Variant.getVariantNames()) };
+			final ItemBlock[] items = {
+					new ItemMultiTexture(DEBRIS, DEBRIS, BlockDebrisVariant.Variant.getVariantNames()) };
 
 			for (final ItemBlock item : items) {
 				registry.register(item.setRegistryName(item.getBlock().getRegistryName()));

@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
 
 import org.blockartistry.Debris.ModOptions;
 import org.blockartistry.Debris.blocks.ModBlocks;
-import org.blockartistry.Debris.blocks.BlockDebris.Variant;
+import org.blockartistry.Debris.blocks.BlockDebrisVariant.Variant;
 import org.blockartistry.Debris.util.BlockStateWeightTable;
 import org.blockartistry.Debris.util.MyUtils;
 import org.blockartistry.Debris.util.WorldUtils;
@@ -45,7 +45,7 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public final class BiomeDecorationHandler {
+public final class DebrisBiomeDecorator {
 
 	private static final int[] dimensionList = MyUtils.splitToInts(ModOptions.dimensionList, ',');
 	private static final boolean dimensionListBlack = ModOptions.dimensionListAsBlack;
@@ -66,7 +66,7 @@ public final class BiomeDecorationHandler {
 		return trashBlocks.nextState(rand);
 	}
 
-	private BiomeDecorationHandler() {
+	private DebrisBiomeDecorator() {
 	}
 
 	private static boolean isGenAllowedInDimension(final int dimension) {
@@ -101,19 +101,19 @@ public final class BiomeDecorationHandler {
 			// the world sea level. Normal sea level is assumed
 			// to be 64, which is the Overworld sea level.
 			final int groundLevel = event.getWorld().provider.getAverageGroundLevel();
-			final int attempts = (int) (ModOptions.rubbleDensity * ((float) groundLevel / 64F));
+			final int toPlace = (int) (ModOptions.rubbleDensity * ((float) groundLevel / 64F));
 			final int maxY = groundLevel - GROUND_ADJUST;
 			final int spread = maxY - MIN_Y;
 
 			// In case someone does something real funky with a
 			// dimension.
-			if (spread < 1 || attempts < 1)
+			if (spread < 1 || toPlace < 1)
 				return;
 
 			final World world = event.getWorld();
 			final Random rand = event.getRand();
 
-			for (int i = 0; i < attempts; i++) {
+			for (int i = 0; i < toPlace; i++) {
 
 				final int x = event.getPos().getX() + rand.nextInt(16) + 8;
 				final int z = event.getPos().getZ() + rand.nextInt(16) + 8;
@@ -133,7 +133,7 @@ public final class BiomeDecorationHandler {
 	}
 
 	public static void init() {
-		MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeDecorationHandler());
+		MinecraftForge.TERRAIN_GEN_BUS.register(new DebrisBiomeDecorator());
 	}
 
 }

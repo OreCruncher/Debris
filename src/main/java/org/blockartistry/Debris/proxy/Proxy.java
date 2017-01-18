@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import org.blockartistry.Debris.items.ModItems;
 import org.blockartistry.Debris.util.Localization;
 import org.blockartistry.Debris.waila.WailaHandler;
-import org.blockartistry.Debris.world.BiomeDecorationHandler;
+import org.blockartistry.Debris.world.DebrisBiomeDecorator;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -57,7 +57,7 @@ public class Proxy {
 		
 		ModItems.init();
 		
-		BiomeDecorationHandler.init();
+		DebrisBiomeDecorator.init();
 	}
 
 	public void init(@Nonnull final FMLInitializationEvent event) {

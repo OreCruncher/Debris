@@ -26,7 +26,7 @@ package org.blockartistry.Debris.models;
 
 import javax.annotation.Nonnull;
 
-import org.blockartistry.Debris.blocks.BlockDebris;
+import org.blockartistry.Debris.blocks.BlockDebrisVariant;
 import org.blockartistry.Debris.blocks.ModBlocks;
 import org.blockartistry.Debris.util.IVariant;
 
@@ -66,8 +66,8 @@ public class ModelManager {
 	}
 
 	private static void registerBlockModels() {
-		registerVariantBlockItemModels(ModBlocks.DEBRIS.getDefaultState().withProperty(BlockDebris.ITEM, true),
-				BlockDebris.VARIANT);
+		registerVariantBlockItemModels(ModBlocks.DEBRIS.getDefaultState().withProperty(BlockDebrisVariant.ITEM, true),
+				BlockDebrisVariant.VARIANT);
 	}
 
 	private static void registerItemModels() {

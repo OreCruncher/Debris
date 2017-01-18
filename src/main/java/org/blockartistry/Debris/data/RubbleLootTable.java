@@ -36,7 +36,6 @@ import org.blockartistry.Debris.Debris;
 import org.blockartistry.Debris.ModEnvironment;
 import org.blockartistry.Debris.ModLog;
 import org.blockartistry.Debris.ModOptions;
-import org.blockartistry.Debris.blocks.BlockDebris;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -59,17 +58,17 @@ import net.minecraftforge.oredict.OreDictionary;
 @Mod.EventBusSubscriber
 public class RubbleLootTable {
 
-	private static final Set<ResourceLocation> tables = new HashSet<ResourceLocation>();
+	private static final Set<ResourceLocation> TABLES = new HashSet<ResourceLocation>();
 
 	public static void register(@Nonnull final ResourceLocation resource) {
-		tables.add(resource);
+		TABLES.add(resource);
 		LootTableList.register(resource);
 	}
 
 	@Nonnull
-	public static List<ItemStack> getDrops(@Nonnull final BlockDebris.Variant rt, @Nonnull final World world,
+	public static List<ItemStack> getDrops(@Nonnull final ResourceLocation lootTable, @Nonnull final World world,
 			@Nullable final EntityPlayer player, @Nonnull final Random rand) {
-		final LootTable table = world.getLootTableManager().getLootTableFromLocation(rt.getResource());
+		final LootTable table = world.getLootTableManager().getLootTableFromLocation(lootTable);
 		if (table != null) {
 			final LootContext.Builder builder = new LootContext.Builder((WorldServer) world);
 			if (player != null) {
@@ -110,7 +109,7 @@ public class RubbleLootTable {
 	@SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = false)
 	public static void onLootTableLoad(@Nonnull final LootTableLoadEvent event) {
 
-		if (!tables.contains(event.getName()))
+		if (!TABLES.contains(event.getName()))
 			return;
 
 		final String poolName = event.getName().getResourcePath();
