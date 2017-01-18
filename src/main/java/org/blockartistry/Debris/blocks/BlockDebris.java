@@ -62,7 +62,7 @@ public class BlockDebris extends BlockBase {
 	}
 	
 	protected void registerLootTables() {
-		RubbleLootTable.register(new ResourceLocation(Debris.RESOURCE_ID, this.name));
+		RubbleLootTable.register(new ResourceLocation(Debris.RESOURCE_ID(), this.name));
 	}
 	
 	@Override
@@ -153,7 +153,7 @@ public class BlockDebris extends BlockBase {
 	
 	@Nonnull
 	protected ResourceLocation getLootTable(@Nonnull final IBlockState state) {
-		return new ResourceLocation(Debris.RESOURCE_ID, this.name);
+		return new ResourceLocation(Debris.RESOURCE_ID(), this.name);
 	}
 
 	@Override

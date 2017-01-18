@@ -127,7 +127,7 @@ public class BlockDebrisVariant extends BlockDebris {
 			this.name = name;
 			this.mapColor = mapColor;
 
-			this.res = new ResourceLocation(Debris.RESOURCE_ID, lootTable);
+			this.res = new ResourceLocation(Debris.RESOURCE_ID(), lootTable);
 			this.weight = weight;
 		}
 

@@ -48,7 +48,7 @@ public class DebrisConfigGui extends GuiConfig {
 	private final Configuration config = Debris.config();
 
 	public DebrisConfigGui(final GuiScreen parentScreen) {
-		super(parentScreen, new ArrayList<IConfigElement>(), Debris.MOD_ID, false, false, Debris.MOD_NAME);
+		super(parentScreen, new ArrayList<IConfigElement>(), Debris.MOD_ID(), false, false, Debris.MOD_NAME());
 		this.titleLine2 = this.config.getConfigFile().getAbsolutePath();
 
 		addConfigCategory(ModOptions.CATEGORY_GENERAL);

@@ -33,8 +33,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.profiler.Profiler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.Mod.Metadata;
+import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
@@ -50,23 +52,31 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnection
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@net.minecraftforge.fml.common.Mod(modid = Debris.MOD_ID, useMetadata = true, dependencies = Debris.DEPENDENCIES, version = Debris.VERSION, guiFactory = Debris.GUI_FACTORY, updateJSON = Debris.UPDATE_URL)
+@Mod(modid = "debris", useMetadata = true, guiFactory = Debris.GUI_FACTORY)
 public class Debris {
-	public static final String MOD_ID = "debris";
-	public static final String API_ID = MOD_ID + "API";
-	public static final String RESOURCE_ID = "debris";
-	public static final String MOD_NAME = "Debris";
-	public static final String VERSION = "@VERSION@";
-	public static final String DEPENDENCIES = "";
 	public static final String GUI_FACTORY = "org.blockartistry.Debris.gui.ConfigGuiFactory";
-	public static final String UPDATE_URL = "https://raw.githubusercontent.com/OreCruncher/Debris/master/version.json";
 
-	@Instance(MOD_ID)
-	protected static Debris instance;
+	@Metadata
+	protected static ModMetadata metadata = null;
 
 	@Nonnull
-	public static Debris instance() {
-		return instance;
+	public static ModMetadata getModMetadata() {
+		return metadata;
+	}
+
+	@Nonnull
+	public static String MOD_ID() {
+		return metadata.modId;
+	}
+
+	@Nonnull
+	public static String RESOURCE_ID() {
+		return metadata.modId;
+	}
+
+	@Nonnull
+	public static String MOD_NAME() {
+		return metadata.name;
 	}
 
 	@SidedProxy(clientSide = "org.blockartistry.Debris.proxy.ProxyClient", serverSide = "org.blockartistry.Debris.proxy.Proxy")
@@ -90,7 +100,7 @@ public class Debris {
 	public static File dataDirectory() {
 		return dataDirectory;
 	}
-	
+
 	@Nonnull
 	@SideOnly(Side.CLIENT)
 	public static Profiler getProfiler() {
@@ -107,9 +117,9 @@ public class Debris {
 		MinecraftForge.EVENT_BUS.register(this);
 
 		// Load up our configuration
-		dataDirectory = new File(event.getModConfigurationDirectory(), Debris.MOD_ID);
+		dataDirectory = new File(event.getModConfigurationDirectory(), MOD_ID());
 		dataDirectory.mkdirs();
-		config = new Configuration(new File(dataDirectory, Debris.MOD_ID + ".cfg"));
+		config = new Configuration(new File(dataDirectory, MOD_ID() + ".cfg"));
 
 		config.load();
 		ModOptions.load(config);
@@ -135,7 +145,7 @@ public class Debris {
 	public void loadCompleted(@Nonnull final FMLLoadCompleteEvent event) {
 		proxy.loadCompleted(event);
 	}
-	
+
 	////////////////////////
 	//
 	// Client state events
@@ -145,7 +155,7 @@ public class Debris {
 	public void clientConnect(@Nonnull final ClientConnectedToServerEvent event) {
 		proxy.clientConnect(event);
 	}
-	
+
 	@SubscribeEvent
 	public void clientDisconnect(@Nonnull final ClientDisconnectionFromServerEvent event) {
 		proxy.clientDisconnect(event);
@@ -160,20 +170,20 @@ public class Debris {
 	public void serverAboutToStart(@Nonnull final FMLServerAboutToStartEvent event) {
 		proxy.serverAboutToStart(event);
 	}
-	
+
 	@EventHandler
 	public void serverStarting(@Nonnull final FMLServerStartingEvent event) {
 		proxy.serverStarting(event);
 	}
-	
+
 	@EventHandler
 	public void serverStopping(@Nonnull final FMLServerStoppingEvent event) {
 		proxy.serverStopping(event);
 	}
-	
+
 	@EventHandler
 	public void serverStopped(@Nonnull final FMLServerStoppedEvent event) {
 		proxy.serverStopped(event);
 	}
-	
+
 }

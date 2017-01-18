@@ -34,7 +34,7 @@ public final class ModLog {
 	
 	public static boolean DEBUGGING = false;
 
-	private static final Logger LOGGER = LogManager.getLogger(Debris.MOD_ID);
+	private static final Logger LOGGER = LogManager.getLogger(Debris.MOD_ID());
 
 	private ModLog() {
 	}

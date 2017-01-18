@@ -1,16 +1,20 @@
-[
 {
-  "modid": "debris",
-  "name": "Debris",
-  "description": "",
-  "version": "$version",
-  "mcversion": "$mcversion",
-  "url": "https://github.com/OreCruncher/Debris/wiki",
-  "updateUrl":"https://raw.githubusercontent.com/OreCruncher/Debris/master/version.json",
-  "authorList": ["OreCruncher"],
-  "credits": "",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
+	"modListVersion": 2,
+	"modList": [
+		{
+		  	"modid": "debris",
+  			"name": "Debris",
+  			"description": "Puts some usable trash piles into the Minecraft world",
+  			"version": "$version",
+  			"mcversion": "$mcversion",
+  			"url": "https://github.com/OreCruncher/Debris/wiki",
+  			"updateUrl":"https://raw.githubusercontent.com/OreCruncher/Debris/master/version.json",
+  			"authorList": ["OreCruncher"],
+  			"credits": "",
+  			"logoFile": "assets/debris/textures/logo.png",
+  			"screenshots": [],
+  			"dependencies": []
+		}
+	]
 }
-]
+

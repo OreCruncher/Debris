@@ -83,7 +83,7 @@ public class RubbleLootTable {
 
 	private static void process(@Nonnull final LootTable table, @Nonnull final String modId,
 			@Nonnull final String poolName) {
-		final ResourceLocation resource = new ResourceLocation(Debris.RESOURCE_ID, modId);
+		final ResourceLocation resource = new ResourceLocation(Debris.RESOURCE_ID(), modId);
 		final LootTable sourceTable = Loot.loadLootTable(resource);
 		if (sourceTable != null && sourceTable != LootTable.EMPTY_LOOT_TABLE) {
 			final LootPool sourcePool = sourceTable.getPool(poolName);
