@@ -118,7 +118,7 @@ public class BlockDebris extends BlockBase {
 	}
 
 	public boolean canBlockStay(@Nonnull final World world, @Nonnull final BlockPos pos,
-			@Nonnull final IBlockState state) {
+			@Nullable final IBlockState state) {
 		if (pos.getY() > 0 && pos.getY() < 256) {
 			final IBlockState downState = world.getBlockState(pos.down());
 			return downState.getBlock() != ModBlocks.DEBRIS && !downState.getBlock().isLeaves(downState, world, pos)

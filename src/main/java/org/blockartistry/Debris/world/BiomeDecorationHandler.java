@@ -24,6 +24,10 @@
 
 package org.blockartistry.Debris.world;
 
+import java.util.Random;
+
+import javax.annotation.Nonnull;
+
 import org.blockartistry.Debris.ModOptions;
 import org.blockartistry.Debris.blocks.ModBlocks;
 import org.blockartistry.Debris.blocks.BlockDebris.Variant;
@@ -46,6 +50,13 @@ public final class BiomeDecorationHandler {
 	private static final int GROUND_ADJUST = 2;
 	private static final int MIN_Y = 5;
 	private static final int PLACE_ATTEMPTS = 2;
+
+	private static final IBlockState[] trashBlocks = new IBlockState[] {
+			ModBlocks.DEBRIS.getBlockState(Variant.PILE_OF_RUBBLE), ModBlocks.DEBRIS.getBlockState(Variant.BONE_PILE) };
+
+	public IBlockState getTrashBlock(@Nonnull final Random rand) {
+		return trashBlocks[rand.nextInt(trashBlocks.length)];
+	}
 
 	private BiomeDecorationHandler() {
 	}
@@ -73,9 +84,9 @@ public final class BiomeDecorationHandler {
 	public void onWorldDecoration(final DecorateBiomeEvent.Decorate event) {
 
 		// Player/op may not want debris in world gen
-		if(!ModOptions.enableDebris)
+		if (!ModOptions.enableDebris)
 			return;
-		
+
 		if (isGenerationAllowed(event)) {
 
 			// Calculate the range and scaling based on
@@ -92,7 +103,6 @@ public final class BiomeDecorationHandler {
 				return;
 
 			final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-			final IBlockState state = ModBlocks.DEBRIS.getBlockState(Variant.PILE_OF_RUBBLE);
 
 			for (int i = 0; i < attempts; i++) {
 
@@ -104,8 +114,8 @@ public final class BiomeDecorationHandler {
 
 				for (int j = 0; j < PLACE_ATTEMPTS; j++) {
 					if (event.getWorld().isAirBlock(pos)
-							&& ModBlocks.DEBRIS.canBlockStay(event.getWorld(), pos, state)) {
-						event.getWorld().setBlockState(pos, state);
+							&& ModBlocks.DEBRIS.canBlockStay(event.getWorld(), pos, null)) {
+						event.getWorld().setBlockState(pos, getTrashBlock(event.getRand()));
 						break;
 					}
 					pos.setY(pos.getY() - 1);
