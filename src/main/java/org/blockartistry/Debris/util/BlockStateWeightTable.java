@@ -22,48 +22,33 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.Debris.proxy;
+package org.blockartistry.Debris.util;
+
+import java.util.Random;
 
 import javax.annotation.Nonnull;
 
-import org.blockartistry.Debris.util.Localization;
+import net.minecraft.block.state.IBlockState;
 
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+public final class BlockStateWeightTable extends WeightTable<BlockStateWeightTable.DebrisItem> {
 
-@SideOnly(Side.CLIENT)
-public class ProxyClient extends Proxy {
+	public static class DebrisItem extends WeightTable.Item {
 
-	@Override
-	protected void registerLanguage() {
-		Localization.initialize(Side.CLIENT);
+		private final IBlockState state;
+
+		public DebrisItem(@Nonnull final IBlockState state, final int weight) {
+			super(weight);
+			this.state = state;
+		}
+
 	}
 
-	@Override
-	public boolean isRunningAsServer() {
-		return false;
+	@Nonnull
+	public IBlockState nextState(@Nonnull final Random rand) {
+		return super.next(rand).state;
 	}
 
-	@Override
-	public void preInit(@Nonnull final FMLPreInitializationEvent event) {
-		super.preInit(event);
+	public void add(@Nonnull final IBlockState state, final int weight) {
+		super.add(new DebrisItem(state, weight));
 	}
-
-	@Override
-	public void init(@Nonnull final FMLInitializationEvent event) {
-		super.init(event);
-	}
-
-	@Override
-	public void clientConnect(@Nonnull final ClientConnectedToServerEvent event) {
-	}
-
-	@Override
-	public void clientDisconnect(@Nonnull final ClientDisconnectionFromServerEvent event) {
-	}
-	
 }

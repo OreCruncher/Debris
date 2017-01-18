@@ -23,54 +23,21 @@
 
 package org.blockartistry.Debris.util;
 
-import java.lang.reflect.Array;
-
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang3.StringUtils;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
-public final class MyUtils {
+public class WorldUtils {
 
-	private static final int[] EMPTY = {};
-
-	private MyUtils() {
+	public static boolean isAirBlock(@Nonnull final IBlockState state) {
+		return state.getBlock() == Blocks.AIR;
 	}
 
-	@Nonnull
-	public static int[] splitToInts(@Nonnull final String str, final char splitChar) {
-
-		final String[] tokens = StringUtils.split(str, splitChar);
-		if (tokens == null || tokens.length == 0)
-			return EMPTY;
-
-		final int[] result = new int[tokens.length];
-		for (int i = 0; i < tokens.length; i++) {
-			result[i] = Integer.parseInt(tokens[i]);
-		}
-
-		return result;
+	public static boolean isAirBlock(@Nonnull final World world, @Nonnull final BlockPos pos) {
+		return isAirBlock(world.getBlockState(pos));
 	}
-
-	public static <T> T[] concatenate(T[] a, T[] b) {
-		int aLen = a.length;
-		int bLen = b.length;
-
-		@SuppressWarnings("unchecked")
-		T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
-		System.arraycopy(a, 0, c, 0, aLen);
-		System.arraycopy(b, 0, c, aLen, bLen);
-
-		return c;
-	}
-
-	public static <T> T[] append(T[] a, T b) {
-		final int aLen = a.length;
-
-		@SuppressWarnings("unchecked")
-		T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + 1);
-		System.arraycopy(a, 0, c, 0, aLen);
-		c[aLen] = b;
-
-		return c;
-	}
+	
 }

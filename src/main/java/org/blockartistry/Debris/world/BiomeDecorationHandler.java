@@ -31,10 +31,13 @@ import javax.annotation.Nonnull;
 import org.blockartistry.Debris.ModOptions;
 import org.blockartistry.Debris.blocks.ModBlocks;
 import org.blockartistry.Debris.blocks.BlockDebris.Variant;
+import org.blockartistry.Debris.util.BlockStateWeightTable;
 import org.blockartistry.Debris.util.MyUtils;
+import org.blockartistry.Debris.util.WorldUtils;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType;
@@ -46,16 +49,21 @@ public final class BiomeDecorationHandler {
 
 	private static final int[] dimensionList = MyUtils.splitToInts(ModOptions.dimensionList, ',');
 	private static final boolean dimensionListBlack = ModOptions.dimensionListAsBlack;
+	private static final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
 	private static final int GROUND_ADJUST = 2;
 	private static final int MIN_Y = 5;
 	private static final int PLACE_ATTEMPTS = 2;
 
-	private static final IBlockState[] trashBlocks = new IBlockState[] {
-			ModBlocks.DEBRIS.getBlockState(Variant.PILE_OF_RUBBLE), ModBlocks.DEBRIS.getBlockState(Variant.BONE_PILE) };
+	private static final BlockStateWeightTable trashBlocks = new BlockStateWeightTable();
 
-	public IBlockState getTrashBlock(@Nonnull final Random rand) {
-		return trashBlocks[rand.nextInt(trashBlocks.length)];
+	static {
+		for (final Variant v : Variant.values())
+			trashBlocks.add(ModBlocks.DEBRIS.getBlockState(v), v.getWeight());
+	}
+
+	private IBlockState getTrashBlock(@Nonnull final Random rand) {
+		return trashBlocks.nextState(rand);
 	}
 
 	private BiomeDecorationHandler() {
@@ -102,20 +110,20 @@ public final class BiomeDecorationHandler {
 			if (spread < 1 || attempts < 1)
 				return;
 
-			final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+			final World world = event.getWorld();
+			final Random rand = event.getRand();
 
 			for (int i = 0; i < attempts; i++) {
 
-				final int x = event.getPos().getX() + event.getRand().nextInt(16) + 8;
-				final int z = event.getPos().getZ() + event.getRand().nextInt(16) + 8;
-				final int y = event.getRand().nextInt(spread) + MIN_Y;
+				final int x = event.getPos().getX() + rand.nextInt(16) + 8;
+				final int z = event.getPos().getZ() + rand.nextInt(16) + 8;
+				final int y = rand.nextInt(spread) + MIN_Y;
 
 				pos.setPos(x, y, z);
 
 				for (int j = 0; j < PLACE_ATTEMPTS; j++) {
-					if (event.getWorld().isAirBlock(pos)
-							&& ModBlocks.DEBRIS.canBlockStay(event.getWorld(), pos, null)) {
-						event.getWorld().setBlockState(pos, getTrashBlock(event.getRand()));
+					if (WorldUtils.isAirBlock(world, pos) && ModBlocks.DEBRIS.canBlockStay(world, pos, null)) {
+						world.setBlockState(pos, getTrashBlock(rand));
 						break;
 					}
 					pos.setY(pos.getY() - 1);

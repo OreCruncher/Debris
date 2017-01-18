@@ -30,7 +30,6 @@ import org.blockartistry.Debris.items.ModItems;
 import org.blockartistry.Debris.util.Localization;
 import org.blockartistry.Debris.waila.WailaHandler;
 import org.blockartistry.Debris.world.BiomeDecorationHandler;
-import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -95,9 +94,4 @@ public class Proxy {
 
 	}
 	
-	
-	// Client helper stuff
-	public void registerItemRenderer(@Nonnull final Item item, final int meta, @Nonnull final String id) {
-	}
-
 }

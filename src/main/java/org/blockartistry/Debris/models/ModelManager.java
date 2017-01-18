@@ -24,13 +24,13 @@
 
 package org.blockartistry.Debris.models;
 
-import java.util.function.ToIntFunction;
-
 import javax.annotation.Nonnull;
 
 import org.blockartistry.Debris.blocks.BlockDebris;
 import org.blockartistry.Debris.blocks.ModBlocks;
 import org.blockartistry.Debris.util.IVariant;
+
+import com.google.common.base.Function;
 
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -50,7 +50,7 @@ public class ModelManager {
 
 	private static final StateMapperBase propertyStringMapper = new StateMapperBase() {
 		@Override
-		protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+		protected ModelResourceLocation getModelResourceLocation(@Nonnull final IBlockState state) {
 			return new ModelResourceLocation("minecraft:air");
 		}
 	};
@@ -66,8 +66,6 @@ public class ModelManager {
 	}
 
 	private static void registerBlockModels() {
-		// registerVariantBlockItemModels(ModBlocks.DEBRIS.getDefaultState(), BlockDebris.VARIANT);
-
 		registerVariantBlockItemModels(ModBlocks.DEBRIS.getDefaultState().withProperty(BlockDebris.ITEM, true),
 				BlockDebris.VARIANT);
 	}
@@ -85,18 +83,18 @@ public class ModelManager {
 	}
 
 	private static <T extends Comparable<T>> void registerVariantBlockItemModels(IBlockState baseState,
-			IProperty<T> property, ToIntFunction<T> getMeta) {
+			IProperty<T> property, Function<T, Integer> getMeta) {
 
 		for (final T t : property.getAllowedValues()) {
-			registerBlockItemModelForMeta(baseState.withProperty(property, t), getMeta.applyAsInt(t));
+			registerBlockItemModelForMeta(baseState.withProperty(property, t), getMeta.apply(t));
 		}
 	}
 
 	private static <T extends IVariant & Comparable<T>> void registerVariantBlockItemModels(IBlockState baseState,
 			IProperty<T> property) {
-		registerVariantBlockItemModels(baseState, property, new ToIntFunction<T>() {
+		registerVariantBlockItemModels(baseState, property, new Function<T, Integer>() {
 			@Override
-			public int applyAsInt(T value) {
+			public Integer apply(@Nonnull final T value) {
 				return ((IVariant) value).getMeta();
 			}
 		});

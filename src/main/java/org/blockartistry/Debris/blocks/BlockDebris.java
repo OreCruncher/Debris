@@ -114,12 +114,12 @@ public class BlockDebris extends BlockBase {
 
 	@Override
 	public boolean canPlaceBlockAt(@Nonnull final World world, @Nonnull final BlockPos pos) {
-		return super.canPlaceBlockAt(world, pos) && this.canBlockStay(world, pos, this.getDefaultState());
+		return super.canPlaceBlockAt(world, pos) && this.canBlockStay(world, pos, null);
 	}
 
 	public boolean canBlockStay(@Nonnull final World world, @Nonnull final BlockPos pos,
 			@Nullable final IBlockState state) {
-		if (pos.getY() > 0 && pos.getY() < 256) {
+		if (pos.getY() > 1 && pos.getY() < 256) {
 			final IBlockState downState = world.getBlockState(pos.down());
 			return downState.getBlock() != ModBlocks.DEBRIS && !downState.getBlock().isLeaves(downState, world, pos)
 					&& downState.isSideSolid(world, pos, EnumFacing.UP);
@@ -236,9 +236,7 @@ public class BlockDebris extends BlockBase {
 
 	public static enum Variant implements IVariant {
 
-		PILE_OF_RUBBLE(0, MapColor.STONE, "pile_of_rubble"), BONE_PILE(1, MapColor.STONE, "bone_pile");
-
-		private final ResourceLocation res;
+		PILE_OF_RUBBLE(0, MapColor.STONE, "pile_of_rubble", 20), BONE_PILE(1, MapColor.STONE, "bone_pile", 10);
 
 		private static final Variant[] META_LOOKUP = new Variant[values().length];
 
@@ -246,18 +244,23 @@ public class BlockDebris extends BlockBase {
 		private final String name;
 		private final String unlocalizedName;
 		private final MapColor mapColor;
+		private final ResourceLocation res;
+		private final int weight;
 
-		private Variant(int meta, MapColor mapColor, String name) {
-			this(meta, mapColor, name, name);
+		private Variant(final int meta, @Nonnull final MapColor mapColor, @Nonnull final String name,
+				final int weight) {
+			this(meta, mapColor, name, name, weight);
 		}
 
-		private Variant(int meta, MapColor mapColor, String name, String unlocalizedName) {
+		private Variant(final int meta, @Nonnull final MapColor mapColor, @Nonnull final String name,
+				@Nonnull final String unlocalizedName, final int weight) {
 			this.meta = meta;
 			this.name = name;
 			this.unlocalizedName = unlocalizedName;
 			this.mapColor = mapColor;
 
 			this.res = new ResourceLocation(Debris.RESOURCE_ID, name);
+			this.weight = weight;
 		}
 
 		/**
@@ -275,6 +278,10 @@ public class BlockDebris extends BlockBase {
 		@Nonnull
 		public ResourceLocation getResource() {
 			return this.res;
+		}
+
+		public int getWeight() {
+			return this.weight;
 		}
 
 		@Nonnull
