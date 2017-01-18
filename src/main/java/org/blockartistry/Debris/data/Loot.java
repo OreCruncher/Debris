@@ -27,12 +27,12 @@ package org.blockartistry.Debris.data;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.blockartistry.Debris.Debris;
 import org.blockartistry.Debris.ModLog;
 
 import com.google.common.base.Charsets;
@@ -55,12 +55,6 @@ import net.minecraft.world.storage.loot.functions.LootFunctionManager;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 public final class Loot {
-
-	/**
-	 * Special name of the pool in the LootTable that the LootTable merging
-	 * logic keys off of.
-	 */
-	public static final String BUILTIN_LOOTPOOL_NAME = Debris.MOD_ID;
 
 	/**
 	 * Handy well known things
@@ -145,6 +139,36 @@ public final class Loot {
 	}
 
 	/**
+	 * Merges a LootPool into a target table.
+	 */
+	public static LootPool merge(@Nonnull final LootTable target, @Nonnull final LootPool pool) {
+		final LootPool targetPool = target.getPool(pool.getName());
+		if (targetPool == null) {
+			ModLog.info("Adding pool [%s] to table", pool.getName());
+			target.addPool(pool);
+		} else {
+			// Collect the duplicates in the pool so we can get
+			// rid of them.
+			final List<String> duplicates = new ArrayList<String>();
+			for (final LootEntry le : getEntries(pool))
+				if (targetPool.getEntry(le.getEntryName()) != null)
+					duplicates.add(le.getEntryName());
+
+			// Get rid of the dupes
+			for (final String dupe : duplicates) {
+				ModLog.info("Replacing entry [%s] in pool [%s]", dupe, pool.getName());
+				targetPool.removeEntry(dupe);
+			}
+
+			// Add the entries
+			for (final LootEntry le : getEntries(pool)) {
+				targetPool.addEntry(le);
+			}
+		}
+		return targetPool;
+	}
+
+	/**
 	 * Merges the source LootTable into the target LootTable. If the pools
 	 * doesn't exist in target it is assigned to target; if the pool exists, the
 	 * LootEntries are merged. Duplicates are overwritten in the target.
@@ -152,19 +176,7 @@ public final class Loot {
 	@Nonnull
 	public static LootTable merge(@Nonnull final LootTable target, @Nonnull final LootTable source) {
 		for (final LootPool lp : getPools(source)) {
-			final LootPool targetPool = target.getPool(lp.getName());
-			if (targetPool == null) {
-				ModLog.info("Adding pool [%s] to table", lp.getName());
-				target.addPool(lp);
-			} else {
-				for (final LootEntry le : getEntries(lp)) {
-					if (targetPool.getEntry(le.getEntryName()) != null) {
-						ModLog.info("Replacing entry [%s] in pool [%s]", le.getEntryName(), targetPool.getName());
-						targetPool.removeEntry(le.getEntryName());
-					}
-					targetPool.addEntry(le);
-				}
-			}
+			merge(target, lp);
 		}
 		return target;
 	}

@@ -9,7 +9,7 @@
 				}
 			},
 			"false": {
-				"model": "minecraft:cross",
+				"model": "debris:pile",
 				"textures": {
 					"cross": "#tex"
 				}
@@ -23,21 +23,8 @@
 			},
 			"bone_pile": {
 				"textures": {
-					"tex": "minecraft:items/bone"
+					"tex": "debris:blocks/bonePile"
 				}
-			}
-		},
-		"facing": {
-			"north": {
-			},
-			"south": {
-				"y": 180
-			},
-			"east": {
-				"y": 90
-			},
-			"west": {
-				"y": 270
 			}
 		}
 	}

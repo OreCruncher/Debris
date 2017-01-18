@@ -24,8 +24,10 @@
 
 package org.blockartistry.Debris.data;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -57,12 +59,11 @@ import net.minecraftforge.oredict.OreDictionary;
 @Mod.EventBusSubscriber
 public class RubbleLootTable {
 
-	static {
-	}
+	private static final Set<ResourceLocation> tables = new HashSet<ResourceLocation>();
 
-	public static void init() {
-		for (final BlockDebris.Variant rt : BlockDebris.Variant.values())
-			LootTableList.register(rt.getResource());
+	public static void register(@Nonnull final ResourceLocation resource) {
+		tables.add(resource);
+		LootTableList.register(resource);
 	}
 
 	@Nonnull
@@ -81,11 +82,14 @@ public class RubbleLootTable {
 		return ImmutableList.of();
 	}
 
-	private static void process(@Nonnull final LootTable table, @Nonnull final String modId) {
+	private static void process(@Nonnull final LootTable table, @Nonnull final String modId,
+			@Nonnull final String poolName) {
 		final ResourceLocation resource = new ResourceLocation(Debris.RESOURCE_ID, modId);
 		final LootTable sourceTable = Loot.loadLootTable(resource);
 		if (sourceTable != null && sourceTable != LootTable.EMPTY_LOOT_TABLE) {
-			Loot.merge(table, sourceTable);
+			final LootPool sourcePool = sourceTable.getPool(poolName);
+			if (sourcePool != null)
+				Loot.merge(table, sourcePool);
 		}
 	}
 
@@ -100,31 +104,35 @@ public class RubbleLootTable {
 						.setAmount(min, max).build();
 				pool.addEntry(entry);
 			}
-
 		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = false)
 	public static void onLootTableLoad(@Nonnull final LootTableLoadEvent event) {
-		final BlockDebris.Variant rt = BlockDebris.Variant.find(event.getName());
-		if (rt != null) {
-			final LootPool pool = event.getTable().getPool(Loot.BUILTIN_LOOTPOOL_NAME);
-			if (pool == null) {
-				ModLog.warn("Can't find pool [%s] in loot table [%s]", Loot.BUILTIN_LOOTPOOL_NAME, rt.getName());
-				return;
-			}
 
-			pool.setRolls(new RandomValueRange(ModOptions.rubbleRollsMin, ModOptions.rubbleRollsMax));
-			pool.setBonusRolls(new RandomValueRange(ModOptions.bonusRollsMin, ModOptions.bonusRollsMax));
+		if (!tables.contains(event.getName()))
+			return;
 
+		final String poolName = event.getName().getResourcePath();
+		final LootPool pool = event.getTable().getPool(poolName);
+
+		if (pool == null) {
+			ModLog.warn("Can't find pool [%s] in loot table [%s]", poolName, event.getName());
+			return;
+		}
+
+		pool.setRolls(new RandomValueRange(ModOptions.rubbleRollsMin, ModOptions.rubbleRollsMax));
+		pool.setBonusRolls(new RandomValueRange(ModOptions.bonusRollsMin, ModOptions.bonusRollsMax));
+
+		if("pile_of_rubble".equals(poolName)) {
 			applyDictionary(pool, "oreCopper", 50, 1, 2);
 			applyDictionary(pool, "oreTin", 50, 1, 2);
-
-			for (final ModEnvironment me : ModEnvironment.values())
-				if (me.isLoaded())
-					process(event.getTable(), me.getModId());
-
 		}
+
+		for (final ModEnvironment me : ModEnvironment.values())
+			if (me.isLoaded())
+				process(event.getTable(), me.getModId(), poolName);
+
 	}
 
 }

@@ -51,7 +51,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -63,7 +62,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BlockDebris extends BlockBase {
 
 	public static final PropertyEnum<Variant> VARIANT = PropertyEnum.<Variant>create("variant", Variant.class);
-	public static final PropertyEnum<Facing> FACING = PropertyEnum.<Facing>create("facing", Facing.class);
 	public static final PropertyBool ITEM = PropertyBool.create("item");
 
 	protected static final AxisAlignedBB DEBRIS_AABB = new AxisAlignedBB(0.0625F, 0.0F, 0.0625F, 0.9375F, 0.375F,
@@ -78,7 +76,11 @@ public class BlockDebris extends BlockBase {
 		this.setResistance(10F);
 
 		this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockDebris.Variant.PILE_OF_RUBBLE)
-				.withProperty(FACING, Facing.NORTH).withProperty(ITEM, false));
+				.withProperty(ITEM, false));
+
+		// Register the loot tables
+		for (final Variant v : Variant.values())
+			RubbleLootTable.register(v.getResource());
 	}
 
 	@Override
@@ -193,21 +195,19 @@ public class BlockDebris extends BlockBase {
 	 */
 	@Nonnull
 	public IBlockState getStateFromMeta(final int meta) {
-		return this.getDefaultState().withProperty(FACING, getFacing(meta)).withProperty(VARIANT, getVariant(meta));
+		return this.getDefaultState().withProperty(VARIANT, getVariant(meta));
 	}
 
 	/**
 	 * Convert the BlockState into the correct metadata value
 	 */
 	public int getMetaFromState(@Nonnull final IBlockState state) {
-		final int variantMeta = state.getValue(VARIANT).getMeta();
-		final int directionMeta = state.getValue(FACING).getMetadata();
-		return (directionMeta << 2) | variantMeta;
+		return state.getValue(VARIANT).getMeta();
 	}
 
 	@Nonnull
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[] { VARIANT, FACING, ITEM });
+		return new BlockStateContainer(this, new IProperty[] { VARIANT, ITEM });
 	}
 
 	@Override
@@ -230,61 +230,8 @@ public class BlockDebris extends BlockBase {
 	}
 
 	@Nonnull
-	public static Facing getFacing(final int meta) {
-		return Facing.byMetadata((meta >> 2) & 3);
-	}
-
-	@Nonnull
 	public static Variant getVariant(final int meta) {
-		return Variant.byMetadata(meta & 3);
-	}
-
-	public static enum Facing implements IStringSerializable {
-
-		NORTH(0, "north", EnumFacing.NORTH), SOUTH(1, "south", EnumFacing.SOUTH), WEST(2, "east",
-				EnumFacing.WEST), EAST(3, "west", EnumFacing.EAST)
-
-		;
-
-		private static final Facing[] META_LOOKUP = new Facing[values().length];
-
-		private final String name;
-		private final int meta;
-		private final EnumFacing facing;
-
-		private Facing(final int meta, @Nonnull final String name, @Nonnull final EnumFacing facing) {
-			this.name = name;
-			this.meta = meta;
-			this.facing = facing;
-		}
-
-		public int getMetadata() {
-			return this.meta;
-		}
-
-		public EnumFacing getFacing() {
-			return this.facing;
-		}
-
-		@Override
-		public String getName() {
-			return this.name;
-		}
-
-		@Nonnull
-		public static Facing byMetadata(int meta) {
-			if (meta < 0 || meta >= META_LOOKUP.length) {
-				meta = 0;
-			}
-
-			return META_LOOKUP[meta];
-		}
-
-		static {
-			for (final Facing f : values()) {
-				META_LOOKUP[f.getMetadata()] = f;
-			}
-		}
+		return Variant.byMetadata(meta);
 	}
 
 	public static enum Variant implements IVariant {
