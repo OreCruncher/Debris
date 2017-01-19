@@ -70,9 +70,11 @@ public final class ModOptions {
 	public static final String CONFIG_BONUS_ROLLS_MIN = "Bonus Rolls Min";
 	public static final String CONFIG_BONUS_ROLLS_MAX = "Bonus Rolls Max";
 	public static final String CONFIG_USE_LUCK = "Use Player Luck";
+	public static final String CONFIG_EXTERNAL_SCRIPTS = "External Configuration Files";
+
 	private static final List<String> generalSort = Arrays.asList(CONFIG_ENABLE, CONFIG_DIMENSION_LIST,
 			CONFIG_AS_BLACKLIST, CONFIG_RUBBLE_DENSITY, CONFIG_RUBBLE_ROLLS_MIN, CONFIG_RUBBLE_ROLLS_MAX,
-			CONFIG_BONUS_ROLLS_MIN, CONFIG_BONUS_ROLLS_MAX, CONFIG_USE_LUCK);
+			CONFIG_BONUS_ROLLS_MIN, CONFIG_BONUS_ROLLS_MAX, CONFIG_USE_LUCK, CONFIG_EXTERNAL_SCRIPTS);
 
 	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_ENABLE, defaultValue = "true", lang = "cfg.general.Enable")
 	@Comment("Enables Debris in world gen")
@@ -110,6 +112,10 @@ public final class ModOptions {
 	@Comment("Player Luck can influence the drops from rubble")
 	@RestartRequired
 	public static boolean useLuck = true;
+	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_EXTERNAL_SCRIPTS, defaultValue = "", lang = "cfg.general.ExternalScripts")
+	@Comment("Configuration files for customization")
+	@RestartRequired
+	public static String[] externalScriptFiles = {};
 
 	public static void load(final Configuration config) {
 

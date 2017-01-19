@@ -24,6 +24,7 @@
 
 package org.blockartistry.Debris.data;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -81,15 +82,27 @@ public class RubbleLootTable {
 		return ImmutableList.of();
 	}
 
+	private static void process(@Nonnull final LootTable table, @Nonnull final LootTable source,
+			@Nonnull final String poolName) {
+		if (source != null && source != LootTable.EMPTY_LOOT_TABLE) {
+			final LootPool sourcePool = source.getPool(poolName);
+			if (sourcePool != null)
+				Loot.merge(table, sourcePool);
+		}
+	}
+
 	private static void process(@Nonnull final LootTable table, @Nonnull final String modId,
 			@Nonnull final String poolName) {
 		final ResourceLocation resource = new ResourceLocation(Debris.RESOURCE_ID(), modId);
 		final LootTable sourceTable = Loot.loadLootTable(resource);
-		if (sourceTable != null && sourceTable != LootTable.EMPTY_LOOT_TABLE) {
-			final LootPool sourcePool = sourceTable.getPool(poolName);
-			if (sourcePool != null)
-				Loot.merge(table, sourcePool);
-		}
+		process(table, sourceTable, poolName);
+	}
+
+	private static void process(@Nonnull final LootTable table, @Nonnull final File file,
+			@Nonnull final String poolName) {
+		final ResourceLocation resource = new ResourceLocation(Debris.RESOURCE_ID(), file.getName());
+		final LootTable sourceTable = Loot.loadLootTable(resource, file);
+		process(table, sourceTable, poolName);
 	}
 
 	private static void applyDictionary(@Nonnull final LootPool pool, @Nonnull final String dictionaryName,
@@ -123,7 +136,7 @@ public class RubbleLootTable {
 		pool.setRolls(new RandomValueRange(ModOptions.rubbleRollsMin, ModOptions.rubbleRollsMax));
 		pool.setBonusRolls(new RandomValueRange(ModOptions.bonusRollsMin, ModOptions.bonusRollsMax));
 
-		if("pile_of_rubble".equals(poolName)) {
+		if ("pile_of_rubble".equals(poolName)) {
 			applyDictionary(pool, "oreCopper", 50, 1, 2);
 			applyDictionary(pool, "oreTin", 50, 1, 2);
 		}
@@ -131,6 +144,14 @@ public class RubbleLootTable {
 		for (final ModEnvironment me : ModEnvironment.values())
 			if (me.isLoaded())
 				process(event.getTable(), me.getModId(), poolName);
+
+		for (final String external : ModOptions.externalScriptFiles) {
+			final File file = new File(Debris.dataDirectory(), external);
+			if(file.exists())
+				process(event.getTable(), file, poolName);
+			else
+				ModLog.warn("Unable to locate external configuration file [%s]", file.toString());
+		}
 
 	}
 

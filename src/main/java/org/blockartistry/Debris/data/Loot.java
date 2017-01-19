@@ -24,15 +24,15 @@
 
 package org.blockartistry.Debris.data;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.blockartistry.Debris.ModLog;
 
 import com.google.common.base.Charsets;
@@ -108,34 +108,49 @@ public final class Loot {
 	}
 
 	/**
+	 * Loads a LootTable from the specified URL.
+	 */
+	public static LootTable loadLootTable(@Nonnull final ResourceLocation resource, @Nonnull final URL url) {
+		String s;
+
+		try {
+			s = Resources.toString(url, Charsets.UTF_8);
+		} catch (@Nonnull final IOException ioexception) {
+			ModLog.error("Couldn\'t load loot table " + resource + " from " + url, ioexception);
+			return LootTable.EMPTY_LOOT_TABLE;
+		}
+
+		try {
+			return net.minecraftforge.common.ForgeHooks.loadLootTable(GSON_INSTANCE, resource, s, false);
+		} catch (@Nonnull final JsonParseException jsonparseexception) {
+			ModLog.error("Couldn\'t load loot table " + resource + " from " + url, jsonparseexception);
+			return LootTable.EMPTY_LOOT_TABLE;
+		}
+	}
+
+	/**
+	 * Loads a LootTable from the specfied file location.
+	 */
+	public static LootTable loadLootTable(@Nonnull final ResourceLocation resource, @Nonnull final File file) {
+		try {
+			return loadLootTable(resource, file.toURI().toURL());
+		} catch (@Nonnull final MalformedURLException e) {
+			ModLog.error("Couldn\'t load loot table from " + file.toString(), e);
+		}
+		return LootTable.EMPTY_LOOT_TABLE;
+	}
+
+	/**
 	 * Loads a LootTable from the specified resource location. It is assumed
 	 * that the source Json is coming from within the mod's archive (JAR).
 	 */
-	@Nullable
+	@Nonnull
 	public static LootTable loadLootTable(@Nonnull final ResourceLocation resource) {
 
 		final URL url = Loot.class.getResource(
 				"/assets/" + resource.getResourceDomain() + "/loot_tables/" + resource.getResourcePath() + ".json");
 
-		if (url != null) {
-			String s;
-
-			try {
-				s = Resources.toString(url, Charsets.UTF_8);
-			} catch (@Nonnull final IOException ioexception) {
-				ModLog.warn("Couldn\'t load loot table " + resource + " from " + url, ioexception);
-				return LootTable.EMPTY_LOOT_TABLE;
-			}
-
-			try {
-				return net.minecraftforge.common.ForgeHooks.loadLootTable(GSON_INSTANCE, resource, s, false);
-			} catch (@Nonnull final JsonParseException jsonparseexception) {
-				ModLog.error("Couldn\'t load loot table " + resource + " from " + url, jsonparseexception);
-				return LootTable.EMPTY_LOOT_TABLE;
-			}
-		} else {
-			return null;
-		}
+		return url != null ? loadLootTable(resource, url) : LootTable.EMPTY_LOOT_TABLE;
 	}
 
 	/**
