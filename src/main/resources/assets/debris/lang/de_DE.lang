@@ -1,0 +1,35 @@
+# Blocks
+tile.debris.pile_of_rubble.name=Schutthaufen
+tile.debris.bone_pile.name=Knochenhaufen
+
+# Version checking strings
+msg.NewVersion.debris=["§6Update verfügbar: §9[",{"text":"§2%1$s §ev%2$s§f","color":"gold","hoverEvent":{"action":"show_text","value":{"text":"Für CurseForge-Projektseite hier klicken","color":"aqua"}},"clickEvent":{"action":"open_url","value":"%3$s"}},"§9]"]
+
+#Configuration
+cfg.logging.cat.Logging=Login-Optionen
+cfg.logging.cat.Logging.tooltip=Optionen, um Loggen/Melden einzustellen
+cfg.logging.EnableDebug=Debug aktivieren
+cfg.logging.EnableDebug.tooltip=Zeichnet Debug-Informationen in der Logdatei auf
+cfg.logging.VersionCheck=Versionscheck
+cfg.logging.VersionCheck.tooltip=Zeigt Updateinformationen bei Client-Login an
+
+cfg.general.cat.General=Generelle Optionen
+cfg.general.cat.General.tooltip=Optionen, um Weltgenerierung einzustellen
+cfg.general.Enable=Weltgen. aktivieren
+cfg.general.Enable.tooltip=Trümmer in der Weltgenerierung aktivieren
+cfg.general.Dimensions=Dimensionsliste
+cfg.general.Dimensions.tooltip=Dimensionsliste mit Black-/Whitelist für Generierung
+cfg.general.BlackList=Als Blacklist handhaben
+cfg.general.BlaclList.tooltip=Die Dimensionsliste als Blacklist handhaben
+cfg.general.RollsMin=Minimale Rollen
+cfg.general.RollsMin.tooltip=Die minimale Anzahl an Rollen, wenn Schutt abgebaut wird
+cfg.general.RollsMax=Maximale Rollen
+cfg.general.RollsMax.tooltip=Die maximale Anzahl an Rollen, wenn Schutt abgebaut wird
+cfg.general.UseLuck=Spielerglück verwenden
+cfg.general.UseLuck.tooltip=Spielerglück kann die Drops von Schutt beeinflussen
+cfg.general.BonusRollsMin=Minimale Bonusrollen
+cfg.general.BonusRollsMin.tooltip=Die minimale Anzahl an Bonusrollen bedingt durch Spielerglück
+cfg.general.BonusRollsMax=Maximale Bonusrollen
+cfg.general.BonusRollsMax.tooltip=Die maximale Anzahl an Bonusrollen bedingt durch Spielerglück
+cfg.general.ExternalScripts=Externe Konfigurationsdateien
+cfg.general.ExternalScripts.tooltip=Konfigurationsdateien zur Anpassung
